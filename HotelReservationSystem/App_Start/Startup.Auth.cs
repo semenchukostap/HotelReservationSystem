@@ -55,10 +55,10 @@ namespace HotelReservationSystem
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            app.UseFacebookAuthentication(
-               appId: FacebookData.AppId,
-               appSecret: FacebookData.AppSecret
-            );
+            //app.UseFacebookAuthentication(
+               //appId: FacebookData.AppId,
+               //appSecret: FacebookData.AppSecret
+            //);
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
