@@ -1,10 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 
-public class HomeController : Controller
+namespace HotelReservationSystem.Controllers
 {
-    public IActionResult Index()
+    [AllowAnonymous]
+    public class HomeController : Controller
     {
-        return View();
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult About()
+        {
+            return View();
+        }
     }
-}
 }
