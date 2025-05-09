@@ -1,14 +1,47 @@
-using Microsoft.Owin;
-using Owin;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-[assembly: OwinStartupAttribute(typeof(HotelReservationSystem.Startup))]
-namespace HotelReservationSystem
+public class Startup
 {
-    public partial class Startup
+    public Startup(IConfiguration configuration)
     {
-        public void Configuration(IAppBuilder app)
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllersWithViews();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            ConfigureAuth(app);
+            app.UseDeveloperExceptionPage();
         }
+        else
+        {
+            app.UseExceptionHandler("/Home/Error");
+            app.UseHsts();
+        }
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+        });
     }
 }
