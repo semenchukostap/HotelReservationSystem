@@ -1,28 +1,44 @@
-﻿using AutoMapper;
+using AutoMapper;
 using HotelReservationSystem.App_Start;
 using HotelReservationSystem.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
-using System.Web.Optimization;
-using System.Web.Routing;
 
 namespace HotelReservationSystem
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class Startup
     {
-        protected void Application_Start()
+        public void ConfigureServices(IServiceCollection services)
         {
-            Mapper.Initialize(c => c.AddProfile<MappingProfile>());
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            AreaRegistration.RegisterAllAreas();
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
+            services.AddControllersWithViews()
+                    .AddNewtonsoftJson();
+            services.AddAutoMapper(typeof(MappingProfile));
+            // Add other necessary services
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }
