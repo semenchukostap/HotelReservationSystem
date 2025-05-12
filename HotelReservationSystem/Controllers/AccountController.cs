@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
 using HotelReservationSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -17,11 +18,13 @@ namespace HotelReservationSystem.Controllers
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         // GET: /Account/Login
@@ -47,6 +50,7 @@ namespace HotelReservationSystem.Controllers
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
+                _logger.LogInformation("User logged in.");
                 return RedirectToLocal(returnUrl);
             }
             if (result.RequiresTwoFactor)
@@ -55,6 +59,7 @@ namespace HotelReservationSystem.Controllers
             }
             if (result.IsLockedOut)
             {
+                _logger.LogWarning("User account locked out.");
                 return View("Lockout");
             }
             else
@@ -71,6 +76,7 @@ namespace HotelReservationSystem.Controllers
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
+                _logger.LogError("Unable to load two-factor authentication user.");
                 return View("Error");
             }
 
@@ -91,10 +97,12 @@ namespace HotelReservationSystem.Controllers
             var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser);
             if (result.Succeeded)
             {
+                _logger.LogInformation("User verified two-factor authentication code.");
                 return RedirectToLocal(model.ReturnUrl);
             }
             if (result.IsLockedOut)
             {
+                _logger.LogWarning("User account locked out.");
                 return View("Lockout");
             }
             else
@@ -124,6 +132,7 @@ namespace HotelReservationSystem.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    _logger.LogInformation("User created a new account with password.");
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -140,7 +149,12 @@ namespace HotelReservationSystem.Controllers
             {
                 return View("Error");
             }
-            var result = await _userManager.ConfirmEmailAsync(await _userManager.FindByIdAsync(userId), code);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return View("Error");
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
@@ -185,7 +199,7 @@ namespace HotelReservationSystem.Controllers
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null)
         {
-            return code == null ? View("Error") : View();
+            return code == null ? View("Error") : View(new ResetPasswordViewModel { Code = code });
         }
 
         // POST: /Account/ResetPassword
@@ -206,6 +220,7 @@ namespace HotelReservationSystem.Controllers
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
             {
+                _logger.LogInformation("User reset password successfully.");
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
             AddErrors(result);
@@ -237,6 +252,7 @@ namespace HotelReservationSystem.Controllers
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
+                _logger.LogError("Unable to load two-factor authentication user.");
                 return View("Error");
             }
 
@@ -258,6 +274,7 @@ namespace HotelReservationSystem.Controllers
 
             if (!await _signInManager.SendTwoFactorCodeAsync(model.SelectedProvider))
             {
+                _logger.LogError("Failed to send two-factor code.");
                 return View("Error");
             }
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
@@ -276,6 +293,7 @@ namespace HotelReservationSystem.Controllers
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded)
             {
+                _logger.LogInformation("User logged in with {Name} provider.", info.LoginProvider);
                 return RedirectToLocal(returnUrl);
             }
             if (result.RequiresTwoFactor)
@@ -284,6 +302,7 @@ namespace HotelReservationSystem.Controllers
             }
             if (result.IsLockedOut)
             {
+                _logger.LogWarning("User account locked out.");
                 return View("Lockout");
             }
             else
@@ -320,6 +339,7 @@ namespace HotelReservationSystem.Controllers
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -336,6 +356,7 @@ namespace HotelReservationSystem.Controllers
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out.");
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
