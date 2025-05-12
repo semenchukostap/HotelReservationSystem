@@ -1,14 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <OutputType>Library</OutputType>
     <RootNamespace>HotelReservationSystem</RootNamespace>
     <AssemblyName>HotelReservationSystem</AssemblyName>
-    <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44349</IISExpressSSLPort>
-    <Use64BitIISExpress />
   </PropertyGroup>
 
   <ItemGroup>
@@ -252,4 +247,6 @@
     <Content Include="Scripts\bloodhound.js" />
     <Content Include="Scripts\bloodhound.min.js" />
     <Content Include="Scripts\bootbox.js" />
-    <Content Include="Scripts\
+  </ItemGroup>
+
+</Project>
