@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using HotelReservationSystem.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HotelReservationSystem.Controllers
 {
@@ -23,7 +24,6 @@ namespace HotelReservationSystem.Controllers
             _signInManager = signInManager;
         }
 
-        //
         // GET: /Account/Login
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
@@ -32,7 +32,6 @@ namespace HotelReservationSystem.Controllers
             return View();
         }
 
-        //
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
@@ -65,7 +64,6 @@ namespace HotelReservationSystem.Controllers
             }
         }
 
-        //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
         public async Task<IActionResult> VerifyCode(string provider, string returnUrl = null, bool rememberMe = false)
@@ -79,7 +77,6 @@ namespace HotelReservationSystem.Controllers
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        //
         // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
@@ -107,7 +104,6 @@ namespace HotelReservationSystem.Controllers
             }
         }
 
-        //
         // GET: /Account/Register
         [AllowAnonymous]
         public IActionResult Register()
@@ -115,7 +111,6 @@ namespace HotelReservationSystem.Controllers
             return View();
         }
 
-        //
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -128,11 +123,6 @@ namespace HotelReservationSystem.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    /* Creating Admin
-                     * var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
-                     * await roleManager.CreateAsync(new IdentityRole("CanManageHotels"));
-                     * await _userManager.AddToRoleAsync(user, "CanManageHotels"); */
-
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -142,7 +132,6 @@ namespace HotelReservationSystem.Controllers
             return View(model);
         }
 
-        //
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
@@ -155,7 +144,6 @@ namespace HotelReservationSystem.Controllers
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
-        //
         // GET: /Account/ForgotPassword
         [AllowAnonymous]
         public IActionResult ForgotPassword()
@@ -163,7 +151,6 @@ namespace HotelReservationSystem.Controllers
             return View();
         }
 
-        //
         // POST: /Account/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
@@ -187,7 +174,6 @@ namespace HotelReservationSystem.Controllers
             return View(model);
         }
 
-        //
         // GET: /Account/ForgotPasswordConfirmation
         [AllowAnonymous]
         public IActionResult ForgotPasswordConfirmation()
@@ -195,7 +181,6 @@ namespace HotelReservationSystem.Controllers
             return View();
         }
 
-        //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null)
@@ -203,7 +188,6 @@ namespace HotelReservationSystem.Controllers
             return code == null ? View("Error") : View();
         }
 
-        //
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
@@ -228,7 +212,6 @@ namespace HotelReservationSystem.Controllers
             return View();
         }
 
-        //
         // GET: /Account/ResetPasswordConfirmation
         [AllowAnonymous]
         public IActionResult ResetPasswordConfirmation()
@@ -236,7 +219,6 @@ namespace HotelReservationSystem.Controllers
             return View();
         }
 
-        //
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]
@@ -248,7 +230,6 @@ namespace HotelReservationSystem.Controllers
             return Challenge(properties, provider);
         }
 
-        //
         // GET: /Account/SendCode
         [AllowAnonymous]
         public async Task<IActionResult> SendCode(string returnUrl = null, bool rememberMe = false)
@@ -264,7 +245,6 @@ namespace HotelReservationSystem.Controllers
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        //
         // POST: /Account/SendCode
         [HttpPost]
         [AllowAnonymous]
@@ -283,7 +263,6 @@ namespace HotelReservationSystem.Controllers
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
 
-        //
         // GET: /Account/ExternalLoginCallback
         [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
@@ -315,7 +294,6 @@ namespace HotelReservationSystem.Controllers
             }
         }
 
-        //
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
         [AllowAnonymous]
@@ -352,7 +330,6 @@ namespace HotelReservationSystem.Controllers
             return View(model);
         }
 
-        //
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -362,7 +339,6 @@ namespace HotelReservationSystem.Controllers
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
-        //
         // GET: /Account/ExternalLoginFailure
         [AllowAnonymous]
         public IActionResult ExternalLoginFailure()
