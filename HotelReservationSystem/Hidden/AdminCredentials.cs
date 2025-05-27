@@ -1,16 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System;
+using Microsoft.Extensions.Configuration;
 
 namespace HotelReservationSystem.Hidden
 {
     public static class AdminCredentials
     {
-        // TODO: To log in to the app as administrator use this credentials
-        // To create new admin you must assign user to CanManageHotels role
+        private static IConfiguration _configuration;
 
-        public static string Login = "admin@admin.com";
-        public static string Password = "Admin1!";
+        static AdminCredentials()
+        {
+            // Initialize the configuration to read from appsettings or environment variables
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+            _configuration = builder.Build();
+        }
+
+        /// <summary>
+        /// Retrieves the admin login from the configuration settings.
+        /// </summary>
+        public static string Login => _configuration["AdminCredentials:Login"] ?? throw new InvalidOperationException("Admin login is not configured.");
+
+        /// <summary>
+        /// Retrieves the admin password from the configuration settings.
+        /// </summary>
+        public static string Password => _configuration["AdminCredentials:Password"] ?? throw new InvalidOperationException("Admin password is not configured.");
     }
 }
