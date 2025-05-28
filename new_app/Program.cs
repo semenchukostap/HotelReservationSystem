@@ -1,3 +1,4 @@
+using AutoMapper;
 using HotelReservationSystem.Data;
 using HotelReservationSystem.Models;
 using HotelReservationSystem.Services;
@@ -93,7 +94,7 @@ public class Program
         services.AddTransient<IEmailSender, EmailSender>();
 
         // Add AutoMapper (replacing Mapper.Initialize in Global.asax.cs)
-        services.AddAutoMapper(typeof(AutoMapperProfile));
+        services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
         // Add Controllers with Views and API support (replacing MVC and WebAPI config)
         services.AddControllersWithViews(options =>
