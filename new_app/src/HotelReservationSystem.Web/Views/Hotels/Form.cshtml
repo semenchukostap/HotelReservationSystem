@@ -1,0 +1,61 @@
+@model HotelReservationSystem.Web.Models.HotelViewModel
+
+@{
+    ViewBag.Title = Model.Hotel.Id != 0 ? "Edit Hotel" : "New Hotel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form asp-action="Save" method="post">
+    @Html.AntiForgeryToken()
+    
+    <div class="mb-3">
+        <label asp-for="Hotel.Name" class="form-label">Name</label>
+        <input asp-for="Hotel.Name" class="form-control" />
+        <span asp-validation-for="Hotel.Name" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="Hotel.CountryId" class="form-label">Country</label>
+        <select asp-for="Hotel.CountryId" asp-items="@(new SelectList(Model.Countries, nameof(HotelReservationSystem.Core.DTOs.CountryDto.Id), nameof(HotelReservationSystem.Core.DTOs.CountryDto.Name)))" class="form-select">
+            <option value="">Select Country</option>
+        </select>
+        <span asp-validation-for="Hotel.CountryId" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="Hotel.City" class="form-label">City</label>
+        <input asp-for="Hotel.City" class="form-control" />
+        <span asp-validation-for="Hotel.City" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="Hotel.Stars" class="form-label">Stars</label>
+        <input asp-for="Hotel.Stars" class="form-control" type="number" min="1" max="5" />
+        <span asp-validation-for="Hotel.Stars" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="Hotel.PricePerNight" class="form-label">Price per night</label>
+        <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input asp-for="Hotel.PricePerNight" class="form-control" type="number" step="0.01" min="1" max="1000" />
+        </div>
+        <span asp-validation-for="Hotel.PricePerNight" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3 form-check">
+        <input asp-for="Hotel.IsAllInclusive" class="form-check-input" type="checkbox" />
+        <label asp-for="Hotel.IsAllInclusive" class="form-check-label">All inclusive</label>
+    </div>
+    
+    @Html.HiddenFor(m => m.Hotel.Id)
+    
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
