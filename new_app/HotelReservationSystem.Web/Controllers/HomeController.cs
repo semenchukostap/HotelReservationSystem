@@ -15,6 +15,7 @@ namespace HotelReservationSystem.Web.Controllers
             _logger = logger;
         }
 
+        // [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new[] { "*" })]
         public IActionResult Index()
         {
             return View();
