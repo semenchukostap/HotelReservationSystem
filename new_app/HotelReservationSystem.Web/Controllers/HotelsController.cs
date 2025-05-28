@@ -21,7 +21,7 @@ namespace HotelReservationSystem.Web.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            if (User.IsInRole(RoleConstants.Admin))
+            if (User.IsInRole(RoleConstants.CanManageHotels))
                 return View("List");
 
             return View("ReadOnlyList");
@@ -90,7 +90,7 @@ namespace HotelReservationSystem.Web.Controllers
             else
                 await _hotelService.UpdateHotelAsync(hotel.Id, hotelDto);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Hotels");
         }
 
         public IActionResult NewCountry()
@@ -116,7 +116,7 @@ namespace HotelReservationSystem.Web.Controllers
 
             await _countryService.CreateCountryAsync(countryDto);
 
-            return RedirectToAction("New");
+            return RedirectToAction("New", "Hotels");
         }
     }
 }
