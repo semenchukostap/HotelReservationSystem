@@ -1,11 +1,13 @@
 using HotelReservationSystem.DTOs;
 using HotelReservationSystem.Services;
 using HotelReservationSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HotelReservationSystem.Controllers
 {
+    [Authorize]
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
@@ -19,12 +21,14 @@ namespace HotelReservationSystem.Controllers
             _hotelService = hotelService;
         }
 
+        [Authorize(Policy = "ViewOrders")]
         public async Task<IActionResult> Index()
         {
             var orders = await _orderService.GetAllOrdersAsync();
             return View(orders);
         }
 
+        [Authorize(Policy = "ViewOrderDetails")]
         public async Task<IActionResult> Details(int id)
         {
             var order = await _orderService.GetOrderByIdAsync(id);
@@ -35,6 +39,7 @@ namespace HotelReservationSystem.Controllers
             return View(order);
         }
 
+        [Authorize(Policy = "CreateOrders")]
         public async Task<IActionResult> New()
         {
             var customers = await _customerService.GetAllCustomersAsync();
@@ -51,6 +56,7 @@ namespace HotelReservationSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "CreateOrders")]
         public async Task<IActionResult> Create(NewOrderDto orderDto)
         {
             if (!ModelState.IsValid)
