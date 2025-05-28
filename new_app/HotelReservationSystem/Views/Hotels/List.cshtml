@@ -1,0 +1,50 @@
+@model IEnumerable<Hotel>
+
+@{
+    ViewBag.Title = "Hotels";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Hotels</h2>
+
+<p>
+    <a asp-controller="Hotels" asp-action="New" class="btn btn-primary">New Hotel</a>
+</p>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Hotel</th>
+            <th>Country</th>
+            <th>City</th>
+            <th>Stars</th>
+            <th>Price per Night</th>
+            <th>Is All Inclusive</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hotel in Model)
+        {
+            <tr>
+                <td>@hotel.Name</td>
+                <td>@hotel.Country?.Name</td>
+                <td>@hotel.City</td>
+                <td>@hotel.Stars</td>
+                <td>$@hotel.PricePerNight</td>
+                <td>@(hotel.IsAllInclusive ? "Yes" : "No")</td>
+                <td>
+                    <a asp-controller="Hotels" asp-action="Edit" asp-route-id="@hotel.Id" class="btn btn-sm btn-info">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.table').DataTable();
+        });
+    </script>
+}
