@@ -1,9 +1,7 @@
-#nullable enable
-
 namespace HotelReservationSystem.Models
 {
     /// <summary>
-    /// Represents a country in the hotel reservation system.
+    /// Represents a country entity in the hotel reservation system.
     /// </summary>
     public class Country
     {
