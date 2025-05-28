@@ -4,43 +4,65 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-modernapp-1A2B3C4D</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- ASP.NET Core and Entity Framework Core -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     
     <!-- Identity and Authentication -->
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.1" />
 
     <!-- AutoMapper -->
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     
-    <!-- Json -->
+    <!-- JSON Processing -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.1" />
     
     <!-- Application Insights -->
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
 
     <!-- Diagnostics and Logging -->
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    
+    <!-- API Documentation -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Create folder structure for the new application -->
-    <Folder Include="Areas\Identity\Pages\Account\" />
+    <!-- Core Application Structure -->
+    <Folder Include="Controllers\" />
     <Folder Include="Controllers\API\" />
+    <Folder Include="Data\" />
     <Folder Include="Data\Migrations\" />
+    <Folder Include="Data\Repositories\" />
     <Folder Include="DTOs\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Middleware\" />
     <Folder Include="Models\" />
     <Folder Include="Services\" />
+    <Folder Include="Services\Interfaces\" />
     <Folder Include="ViewModels\" />
+    
+    <!-- Identity -->
+    <Folder Include="Areas\Identity\Pages\Account\" />
+    
+    <!-- Client Assets -->
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\js\" />
     <Folder Include="wwwroot\lib\" />
