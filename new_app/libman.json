@@ -39,7 +39,7 @@
       ]
     },
     {
-      "library": "datatables.net@2.0.0",
+      "library": "datatables.net@2.1.1",
       "destination": "wwwroot/lib/datatables",
       "files": [
         "jquery.dataTables.min.js",
@@ -92,6 +92,32 @@
       "files": [
         "umd/popper.min.js",
         "umd/popper.js"
+      ]
+    },
+    {
+      "library": "modernizr@2.8.3",
+      "destination": "wwwroot/lib/modernizr",
+      "files": [
+        "modernizr.min.js",
+        "modernizr.js"
+      ]
+    },
+    {
+      "library": "font-awesome@6.4.2",
+      "destination": "wwwroot/lib/font-awesome",
+      "files": [
+        "css/all.min.css",
+        "css/all.css",
+        "js/all.min.js",
+        "js/all.js",
+        "webfonts/fa-brands-400.ttf",
+        "webfonts/fa-brands-400.woff2",
+        "webfonts/fa-regular-400.ttf",
+        "webfonts/fa-regular-400.woff2",
+        "webfonts/fa-solid-900.ttf",
+        "webfonts/fa-solid-900.woff2",
+        "webfonts/fa-v4compatibility.ttf",
+        "webfonts/fa-v4compatibility.woff2"
       ]
     }
   ]
