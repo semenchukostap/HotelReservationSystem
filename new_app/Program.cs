@@ -1,285 +1,187 @@
 using HotelReservationSystem.Data;
 using HotelReservationSystem.Models;
+using HotelReservationSystem.Services;
 using HotelReservationSystem.Mappings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Microsoft.AspNetCore.Http.Json;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
-// Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .WriteTo.File("logs/hotel_reservation.log", rollingInterval: RollingInterval.Day)
-    .CreateBootstrapLogger();
+namespace HotelReservationSystem;
 
-try
+public class Program
 {
-    // Setup builder with Serilog
-    var builder = WebApplication.CreateBuilder(args);
-    builder.Host.UseSerilog((context, services, configuration) => configuration
-        .ReadFrom.Configuration(context.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext());
-
-    // Configuration
-    builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-    builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
-    builder.Configuration.AddEnvironmentVariables();
-
-    if (builder.Environment.IsDevelopment())
+    public static async Task Main(string[] args)
     {
-        builder.Configuration.AddUserSecrets<Program>();
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+        ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
+
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        ConfigureMiddleware(app, app.Environment);
+
+        // Seed the database
+        await SeedDatabase(app);
+
+        app.Run();
     }
 
-    // Add services to the container
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
-    // Configure DbContext with SQL Server
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(connectionString, sqlOptions =>
-        {
-            sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 5,
-                maxRetryDelay: TimeSpan.FromSeconds(30),
-                errorNumbersToAdd: null);
-        }));
-
-    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-    // Configure Identity with modern options
-    builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+    private static void ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-        options.SignIn.RequireConfirmedAccount = false;
-        options.Password.RequireDigit = true;
-        options.Password.RequireLowercase = true;
-        options.Password.RequireUppercase = true;
-        options.Password.RequireNonAlphanumeric = true;
-        options.Password.RequiredLength = 8;
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-        options.Lockout.MaxFailedAccessAttempts = 5;
-    })
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
+        // Add DbContext
+        var connectionString = configuration.GetConnectionString("DefaultConnection") ?? 
+            throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionString));
 
-    // Configure authentication and cookie policy
-    builder.Services.AddAuthentication()
-        .AddCookie(IdentityConstants.ApplicationScheme, options =>
+        // Add Identity (replacing OWIN authentication)
+        services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                // Password settings (migrated from ApplicationUserManager)
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+
+                // Lockout settings (migrated from ApplicationUserManager)
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        // Add Authentication (replacing OWIN authentication)
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddCookie(IdentityConstants.ApplicationScheme, options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.SlidingExpiration = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+            })
+            .AddCookie(IdentityConstants.ExternalScheme, options =>
+            {
+                options.Cookie.Name = IdentityConstants.ExternalScheme;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            })
+            .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, options =>
+            {
+                options.Cookie.Name = IdentityConstants.TwoFactorRememberMeScheme;
+                options.ExpireTimeSpan = TimeSpan.FromDays(14);
+            })
+            .AddCookie(IdentityConstants.TwoFactorUserIdScheme, options =>
+            {
+                options.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            });
+
+        // Email services (replacing EmailService)
+        services.AddTransient<IEmailSender, EmailSender>();
+
+        // Add AutoMapper (replacing Mapper.Initialize in Global.asax.cs)
+        services.AddAutoMapper(typeof(AutoMapperProfile));
+
+        // Add Controllers with Views and API support (replacing MVC and WebAPI config)
+        services.AddControllersWithViews(options =>
         {
-            options.LoginPath = "/Identity/Account/Login";
-            options.LogoutPath = "/Identity/Account/Logout";
-            options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-            options.SlidingExpiration = true;
-            options.ExpireTimeSpan = TimeSpan.FromHours(2);
-            options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.SameSite = SameSiteMode.Lax;
+            // Add global filters (replacing FilterConfig.RegisterGlobalFilters)
+            options.Filters.Add(new Microsoft.AspNetCore.Mvc.AuthorizeFilter());
+        })
+        .AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
         });
 
-    // Configure Authorization Policies
-    builder.Services.AddAuthorization(options =>
-    {
-        options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-        options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Manager"));
-        options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
-    });
+        // Add Razor Pages support
+        services.AddRazorPages();
 
-    // Add AutoMapper with custom profile
-    builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
-    // Add MVC with filters (similar to FilterConfig)
-    builder.Services.AddControllersWithViews(options => 
-    {
-        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-        options.Filters.Add(new RequireHttpsAttribute());
-    })
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-    });
-
-    // Configure API (similar to WebApiConfig)
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(c =>
-    {
-        c.SwaggerDoc("v1", new() { Title = "Hotel Reservation API", Version = "v1" });
-    });
-    
-    // Add Razor Pages support
-    builder.Services.AddRazorPages();
-
-    // Add Memory Cache and Distributed Cache
-    builder.Services.AddMemoryCache();
-    builder.Services.AddDistributedMemoryCache();
-
-    // Add Session support
-    builder.Services.AddSession(options =>
-    {
-        options.IdleTimeout = TimeSpan.FromMinutes(30);
-        options.Cookie.HttpOnly = true;
-        options.Cookie.IsEssential = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    });
-
-    // CORS policy
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowSpecificOrigins",
-            policy =>
-            {
-                policy.WithOrigins("https://localhost:7000")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-    });
-
-    // Configure Performance and other options
-    builder.Services.Configure<RouteOptions>(options =>
-    {
-        options.LowercaseUrls = true;
-        options.AppendTrailingSlash = false;
-    });
-
-    // Health checks
-    builder.Services.AddHealthChecks()
-        .AddDbContextCheck<ApplicationDbContext>()
-        .AddCheck<MemoryHealthCheck>("Memory");
-
-    // Build the app
-    var app = builder.Build();
-
-    // Configure the HTTP request pipeline
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseMigrationsEndPoint();
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel Reservation API v1"));
-    }
-    else
-    {
-        app.UseExceptionHandler("/Home/Error");
-        app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
-        app.UseHsts();
-    }
-
-    // Request logging middleware
-    app.UseSerilogRequestLogging();
-
-    app.UseHttpsRedirection();
-    app.UseStaticFiles();
-    app.UseCookiePolicy();
-    app.UseSession();
-
-    // Use CORS before routing
-    app.UseCors("AllowSpecificOrigins");
-
-    app.UseRouting();
-
-    app.UseAuthentication();
-    app.UseAuthorization();
-
-    // API endpoints
-    app.MapHealthChecks("/health");
-    
-    // Configure routes (similar to RouteConfig)
-    app.MapControllerRoute(
-        name: "areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-    app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-
-    app.MapRazorPages();
-
-    // Initialize database and seed roles
-    await InitializeDatabaseAsync(app);
-
-    // Start the application
-    await app.RunAsync();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Application terminated unexpectedly");
-}
-finally
-{
-    Log.CloseAndFlush();
-}
-
-// Method to initialize database
-async Task InitializeDatabaseAsync(WebApplication app)
-{
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        await context.Database.MigrateAsync();
-            
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-            
-        // Seed roles if they don't exist
-        string[] roleNames = { "Admin", "Manager", "User" };
-        foreach (var roleName in roleNames)
+        // Configure HTTPS redirection (replacing RequireHttpsAttribute global filter)
+        services.AddHttpsRedirection(options =>
         {
-            if (!await roleManager.RoleExistsAsync(roleName))
-            {
-                await roleManager.CreateAsync(new IdentityRole(roleName));
-            }
+            options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            options.HttpsPort = 44349; // Use your SSL port here
+        });
+
+        // Add diagnosis tools (replacing Glimpse)
+        if (environment.IsDevelopment())
+        {
+            services.AddDatabaseDeveloperPageExceptionFilter();
+        }
+    }
+
+    private static void ConfigureMiddleware(WebApplication app, IWebHostEnvironment environment)
+    {
+        // Configure the HTTP request pipeline.
+        if (environment.IsDevelopment())
+        {
+            app.UseMigrationsEndPoint();
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Home/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios.
+            app.UseHsts();
         }
 
-        // Check for admin user and create if not exists
-        var adminEmail = app.Configuration["AdminUser:Email"];
-        if (!string.IsNullOrEmpty(adminEmail))
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        // Routing middleware (replacing IgnoreRoute and MapRoute from RouteConfig)
+        app.UseRouting();
+
+        // Authentication and authorization middleware (replacing OWIN middleware)
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // Configure endpoints (replacing conventional routes and attribute routes)
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        // Map Razor Pages for Identity
+        app.MapRazorPages();
+
+        // Map API endpoints
+        app.MapControllers();
+    }
+
+    private static async Task SeedDatabase(WebApplication app)
+    {
+        using (var scope = app.Services.CreateScope())
         {
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
-            if (adminUser == null)
+            var services = scope.ServiceProvider;
+            try
             {
-                adminUser = new ApplicationUser
-                {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    EmailConfirmed = true
-                };
-                var password = app.Configuration["AdminUser:Password"];
-                var result = await userManager.CreateAsync(adminUser, password ?? "Admin@123456");
+                var context = services.GetRequiredService<ApplicationDbContext>();
+                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                 
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
-                }
+                // Create database if it doesn't exist
+                await context.Database.EnsureCreatedAsync();
+                
+                // Seed application roles and admin user
+                await DbInitializer.Initialize(context, userManager, roleManager);
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while seeding the database.");
             }
         }
     }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
-    }
 }
-
-// Health check class
-public class MemoryHealthCheck : Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck
-{
-    public Task<Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult> CheckHealthAsync(
-        Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext context, 
-        CancellationToken cancellationToken = default)
-    {
-        var allocated = GC.GetTotalMemory(forceFullCollection: false);
-        var memoryInfo = Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy("Memory within parameters", 
-            new Dictionary<string, object> { { "AllocatedBytes", allocated } });
-        
-        return Task.FromResult(memoryInfo);
-    }
-}
-
-// Make the implicit Program class public for testing
-public partial class Program { }
