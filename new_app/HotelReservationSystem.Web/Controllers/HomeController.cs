@@ -1,7 +1,7 @@
+using System.Diagnostics;
 using HotelReservationSystem.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace HotelReservationSystem.Web.Controllers
 {
