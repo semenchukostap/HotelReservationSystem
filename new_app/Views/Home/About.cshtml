@@ -1,36 +1,80 @@
 @{
-    ViewData["Title"] = "About";
+    ViewData["Title"] = "About Us";
 }
 
-<h2>@ViewData["Title"]</h2>
-
-<div class="row">
-    <div class="col-md-8">
-        <h3>About Hotel Reservation System</h3>
-        <p>
-            This application is designed to help manage hotel reservations, customer data, and booking information.
-        </p>
-        <p>
-            Built with ASP.NET Core 8.0, this modern web application provides a robust platform for hotel management.
-        </p>
-
-        <h4>Features:</h4>
-        <ul>
-            <li>Hotel management and listings</li>
-            <li>Customer profiles and data tracking</li>
-            <li>Reservation booking and management</li>
-            <li>Secure user authentication</li>
-            <li>Role-based access control</li>
-        </ul>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-light">
-            <div class="card-body">
-                <h4 class="card-title">Version</h4>
-                <p class="card-text">2.0.0</p>
-                <p class="card-text">ASP.NET Core 8.0</p>
-                <p class="card-text">© @DateTime.Now.Year - Hotel Reservation System</p>
-            </div>
+<div class="container py-4">
+    <h1 class="display-4 mb-4">@ViewData["Title"]</h1>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <section class="mb-4">
+                <h2>About Book&Go Hotel Reservation System</h2>
+                <p class="lead">
+                    A modern hotel reservation platform designed to simplify booking management and enhance guest experiences.
+                </p>
+                <p>
+                    Built with ASP.NET Core 8.0, this application provides a robust and scalable solution for hotels of all sizes.
+                    Our system streamlines reservation processes while offering powerful management tools for hotel staff.
+                </p>
+                
+                <div class="card border-0 shadow-sm mt-4 mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="h5 mb-0">Key Features</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-building me-2"></i> Comprehensive hotel management and listings
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-person-circle me-2"></i> Customer profiles and preference tracking
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-calendar-check me-2"></i> Reservation booking and management
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-shield-lock me-2"></i> Secure user authentication
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="bi bi-person-gear me-2"></i> Role-based access control
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="col-lg-4">
+            <aside>
+                <div class="card bg-light border-0 shadow-sm">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="h5 mb-0">System Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h5 class="text-primary">Book&Go</h5>
+                            <p class="card-text text-muted mb-0">Version: 2.0.0</p>
+                            <p class="card-text text-muted mb-0">Framework: ASP.NET Core 8.0</p>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">
+                                <i class="bi bi-c-circle"></i> @DateTime.Now.Year - Book&Go Reservation System
+                            </span>
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-4">
+                    <h5 class="alert-heading">Need Help?</h5>
+                    <p>Our support team is available 24/7 to assist with any questions or issues.</p>
+                    <hr>
+                    <p class="mb-0">Contact us at <strong>support@bookandgo.example.com</strong></p>
+                </div>
+            </aside>
         </div>
     </div>
 </div>
