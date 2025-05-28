@@ -70,4 +70,25 @@ app.MapControllerRoute(
 // Add WebAPI routes
 app.MapControllers();
 
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        // Apply migrations
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.MigrateAsync();
+
+        // Seed roles, admin user, and countries
+        await DataSeeding.SeedRolesAndUsersAsync(app.Services);
+        await DataSeeding.SeedCountriesAsync(app.Services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
+
 app.Run();
