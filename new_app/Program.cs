@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microsoft.AspNetCore.Http.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -16,7 +18,7 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     // Setup builder with Serilog
-    var builder = WebApplication.CreateSlimBuilder(args);
+    var builder = WebApplication.CreateBuilder(args);
     builder.Host.UseSerilog((context, services, configuration) => configuration
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services)
@@ -88,15 +90,26 @@ try
     // Add AutoMapper with custom profile
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-    // Add Controllers with Views and API support using System.Text.Json
-    builder.Services.AddControllersWithViews()
-        .AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-        });
+    // Add MVC with filters (similar to FilterConfig)
+    builder.Services.AddControllersWithViews(options => 
+    {
+        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+        options.Filters.Add(new RequireHttpsAttribute());
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 
+    // Configure API (similar to WebApiConfig)
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new() { Title = "Hotel Reservation API", Version = "v1" });
+    });
+    
     // Add Razor Pages support
     builder.Services.AddRazorPages();
 
@@ -145,6 +158,8 @@ try
     {
         app.UseMigrationsEndPoint();
         app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel Reservation API v1"));
     }
     else
     {
@@ -172,7 +187,7 @@ try
     // API endpoints
     app.MapHealthChecks("/health");
     
-    // Configure routes
+    // Configure routes (similar to RouteConfig)
     app.MapControllerRoute(
         name: "areas",
         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
