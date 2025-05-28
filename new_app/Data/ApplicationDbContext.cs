@@ -20,6 +20,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(builder);
         
-        // Add any entity configuration here
+        // Entity configurations can be added here
     }
 }
