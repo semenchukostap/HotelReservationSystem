@@ -1,0 +1,27 @@
+@{
+    ViewBag.Title = "Home";
+}
+
+<div class="jumbotron">
+    <h1>Book&Go</h1>
+    <p class="lead">Welcome to Book&Go - your premier hotel reservation system.</p>
+    <p><a asp-controller="Hotels" asp-action="Index" class="btn btn-primary btn-lg">Browse Hotels &raquo;</a></p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Browse Hotels</h2>
+        <p>View our full list of hotels around the world.</p>
+        <p><a asp-controller="Hotels" asp-action="Index" class="btn btn-default">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Make a Reservation</h2>
+        <p>Find the perfect hotel for your next vacation.</p>
+        <p><a asp-controller="Orders" asp-action="Index" class="btn btn-default">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>About Us</h2>
+        <p>Learn more about the Book&Go hotel reservation system.</p>
+        <p><a asp-controller="Home" asp-action="About" class="btn btn-default">Learn more &raquo;</a></p>
+    </div>
+</div>
