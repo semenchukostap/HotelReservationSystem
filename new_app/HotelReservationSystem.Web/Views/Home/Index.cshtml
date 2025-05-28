@@ -1,0 +1,28 @@
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Book&Go - Hotel Reservation System</h1>
+    <p class="lead">Book&Go is a simple hotel reservation system created for educational purposes.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Hotels</h2>
+        <p>
+            See our hotels all over the world!
+        </p>
+        <p><a class="btn btn-primary" asp-controller="Hotels" asp-action="Index">View hotels &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Customers</h2>
+        <p>Register a customer account to take advantage of our reservation system.</p>
+        <p><a class="btn btn-default" asp-controller="Customers" asp-action="Index">Go to Customers &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>New reservation</h2>
+        <p>Make a new reservation now to feel the best service in the world!</p>
+        <p><a class="btn btn-success" asp-controller="Orders" asp-action="New">Make reservation &raquo;</a></p>
+    </div>
+</div>
