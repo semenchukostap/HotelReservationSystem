@@ -20,7 +20,7 @@ namespace HotelReservationSystem.Data
         {
             base.OnModelCreating(builder);
             
-            // Configure any model relationships or constraints here
+            // Configure entity relationships
             builder.Entity<Order>()
                 .HasOne(o => o.Customer)
                 .WithMany()
