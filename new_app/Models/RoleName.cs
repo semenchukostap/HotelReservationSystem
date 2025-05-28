@@ -12,6 +12,7 @@ namespace HotelReservationSystem.Models
         
         /// <summary>
         /// Role that grants administrative permissions throughout the application.
+        /// Users with this role have full access to all system features.
         /// </summary>
         public const string Admin = "Admin";
     }
