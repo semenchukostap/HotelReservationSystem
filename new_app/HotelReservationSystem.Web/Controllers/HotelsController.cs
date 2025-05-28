@@ -93,7 +93,7 @@ namespace HotelReservationSystem.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> NewCountry()
+        public IActionResult NewCountry()
         {
             return View("NewCountryForm", new Country());
         }
