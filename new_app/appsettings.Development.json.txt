@@ -1,0 +1,52 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "Microsoft": "Information",
+      "Microsoft.AspNetCore": "Information",
+      "Microsoft.Hosting.Lifetime": "Information",
+      "Microsoft.EntityFrameworkCore.Database.Command": "Information"
+    },
+    "Console": {
+      "LogLevel": {
+        "Default": "Debug",
+        "Microsoft.EntityFrameworkCore.Database.Command": "Information"
+      },
+      "FormatterName": "json",
+      "FormatterOptions": {
+        "SingleLine": true,
+        "IncludeScopes": true,
+        "TimestampFormat": "HH:mm:ss ",
+        "UseUtcTimestamp": true,
+        "JsonWriterOptions": {
+          "Indented": true
+        }
+      }
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=HotelReservationSystem;User ID=sa;Password=YourStrongPassword1;TrustServerCertificate=True;MultipleActiveResultSets=true"
+  },
+  "DetailedErrors": true,
+  "AllowedHosts": "*",
+  "IdentityServer": {
+    "Key": {
+      "Type": "Development"
+    }
+  },
+  "Authentication": {
+    "Facebook": {
+      "IsEnabled": true,
+      "AppId": "YOUR_DEVELOPMENT_FACEBOOK_APP_ID",
+      "AppSecret": "YOUR_DEVELOPMENT_FACEBOOK_APP_SECRET"
+    }
+  },
+  "EmailSettings": {
+    "SendGridKey": "DEVELOPMENT_SENDGRID_KEY",
+    "FromEmail": "development@example.com",
+    "FromName": "Hotel Reservation System (Development)"
+  },
+  "Glimpse": {
+    "Enabled": true
+  }
+}
