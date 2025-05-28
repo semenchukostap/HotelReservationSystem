@@ -1,1 +1,0 @@
-This is just a test file to confirm we can write to the new_app directory.
