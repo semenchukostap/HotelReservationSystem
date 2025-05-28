@@ -8,36 +8,24 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        // Create maps for entities to DTOs and vice versa
-        CreateMap<Hotel, HotelDto>()
-            .ForMember(dest => dest.Country, opt => opt.ExplicitExpansion());
-        CreateMap<HotelDto, Hotel>()
-            .ForMember(dest => dest.Country, opt => opt.Ignore())
-            .ForMember(dest => dest.Orders, opt => opt.Ignore());
-        
-        CreateMap<Country, CountryDto>()
-            .ForMember(dest => dest.Hotels, opt => opt.ExplicitExpansion());
-        CreateMap<CountryDto, Country>()
-            .ForMember(dest => dest.Hotels, opt => opt.Ignore());
-        
+        // Entity to DTO mappings
+        CreateMap<Hotel, HotelDto>();
+        CreateMap<Country, CountryDto>();
+        CreateMap<Customer, CustomerDto>();
+        CreateMap<Order, OrderDto>();
         CreateMap<Order, NewOrderDto>();
-        CreateMap<NewOrderDto, Order>()
-            .ForMember(dest => dest.DateOrdered, opt => opt.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(dest => dest.FullPrice, opt => opt.Ignore())
-            .ForMember(dest => dest.Customer, opt => opt.Ignore())
-            .ForMember(dest => dest.Hotel, opt => opt.Ignore());
 
-        CreateMap<Order, OrderDto>()
-            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
-            .ForMember(dest => dest.HotelName, opt => opt.MapFrom(src => src.Hotel.Name));
-        CreateMap<OrderDto, Order>()
-            .ForMember(dest => dest.Customer, opt => opt.Ignore())
-            .ForMember(dest => dest.Hotel, opt => opt.Ignore());
+        // DTO to Entity mappings
+        CreateMap<HotelDto, Hotel>()
+            .ForMember(h => h.Country, opt => opt.Ignore()); // Ignore navigation property
+
+        CreateMap<CountryDto, Country>();
         
-        // Mappings for Customer
-        CreateMap<Customer, CustomerDto>()
-            .ForMember(dest => dest.Orders, opt => opt.ExplicitExpansion());
-        CreateMap<CustomerDto, Customer>()
-            .ForMember(dest => dest.Orders, opt => opt.Ignore());
+        CreateMap<NewOrderDto, Order>()
+            .ForMember(o => o.Id, opt => opt.Ignore())
+            .ForMember(o => o.Customer, opt => opt.Ignore())
+            .ForMember(o => o.Hotel, opt => opt.Ignore())
+            .ForMember(o => o.DateOrdered, opt => opt.MapFrom(_ => DateTime.Now))
+            .ForMember(o => o.FullPrice, opt => opt.Ignore());
     }
 }
