@@ -37,7 +37,7 @@ namespace HotelReservationSystem.Data.Configuration
             catch (Exception ex)
             {
                 // Log any error during initialization
-                var logger = services.GetRequiredService<ILogger<Program>>();
+                var logger = services.GetRequiredService<ILogger<ApplicationDbContext>>();
                 logger.LogError(ex, "An error occurred while seeding the database.");
             }
         }
@@ -51,16 +51,16 @@ namespace HotelReservationSystem.Data.Configuration
             if (!context.Countries.Any())
             {
                 context.Countries.AddRange(
-                    new Country { Name = "United States" },
-                    new Country { Name = "United Kingdom" },
-                    new Country { Name = "France" },
+                    new Country { Name = "Egypt" },
+                    new Country { Name = "Poland" },
                     new Country { Name = "Germany" },
                     new Country { Name = "Spain" },
-                    new Country { Name = "Italy" },
                     new Country { Name = "Greece" },
-                    new Country { Name = "Japan" },
-                    new Country { Name = "Australia" },
-                    new Country { Name = "Canada" }
+                    new Country { Name = "Turkey" },
+                    new Country { Name = "Malta" },
+                    new Country { Name = "France" },
+                    new Country { Name = "Portugal" },
+                    new Country { Name = "England" }
                 );
                 
                 await context.SaveChangesAsync();
