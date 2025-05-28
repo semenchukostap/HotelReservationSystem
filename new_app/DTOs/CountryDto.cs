@@ -17,5 +17,11 @@ namespace HotelReservationSystem.DTOs
         /// </summary>
         [Required]
         public required string Name { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// ISO code for the country
+        /// </summary>
+        [StringLength(2)]
+        public string? IsoCode { get; set; }
     }
 }
