@@ -1,0 +1,57 @@
+@model HotelReservationSystem.Web.ViewModels.HotelViewModel
+@{
+    ViewBag.Title = Model.Hotel?.Id > 0 ? "Edit Hotel" : "New Hotel";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form asp-action="Save" method="post">
+    <div class="form-group">
+        <label asp-for="Hotel!.Name">Name</label>
+        <input asp-for="Hotel!.Name" class="form-control" />
+        <span asp-validation-for="Hotel!.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Hotel!.CountryId">Country</label>
+        <select asp-for="Hotel!.CountryId" asp-items="Model.CountryOptions" class="form-control"></select>
+        <span asp-validation-for="Hotel!.CountryId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Hotel!.City">City</label>
+        <input asp-for="Hotel!.City" class="form-control" />
+        <span asp-validation-for="Hotel!.City" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Hotel!.Stars">Stars</label>
+        <input asp-for="Hotel!.Stars" class="form-control" type="number" min="1" max="5" />
+        <span asp-validation-for="Hotel!.Stars" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Hotel!.PricePerNight">Price per night</label>
+        <input asp-for="Hotel!.PricePerNight" class="form-control" type="number" min="1" max="1000" step="0.01" />
+        <span asp-validation-for="Hotel!.PricePerNight" class="text-danger"></span>
+    </div>
+
+    <div class="checkbox">
+        <label>
+            <input asp-for="Hotel!.IsAllInclusive" /> All inclusive
+        </label>
+    </div>
+
+    <input type="hidden" asp-for="Hotel!.Id" />
+    @Html.AntiForgeryToken()
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <p class="mt-3">
+        <a asp-action="NewCountry" class="btn btn-default">Add New Country</a>
+    </p>
+</form>
+
+@section Scripts {
+    <script src="~/js/jquery.validate.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.js"></script>
+}
