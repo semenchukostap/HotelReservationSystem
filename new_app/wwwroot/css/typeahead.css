@@ -1,0 +1,87 @@
+/* Typeahead.css - Migrated from legacy application for Bootstrap 5 compatibility */
+
+:root {
+  --typeahead-primary: #0097cf;
+  --typeahead-bg: #fff;
+  --typeahead-text: #212529;
+  --typeahead-hint: #999;
+  --typeahead-border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Base typeahead styles */
+.typeahead {
+  background-color: var(--typeahead-bg);
+}
+
+.typeahead:focus {
+  border: 2px solid var(--typeahead-primary);
+  outline: none;
+}
+
+/* Query input styling */
+.tt-query {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+/* Placeholder text */
+.tt-hint {
+  color: var(--typeahead-hint);
+}
+
+/* Dropdown menu container */
+.tt-menu {
+  width: 100%;
+  max-width: 422px;
+  margin: 12px 0;
+  padding: 8px 0;
+  background-color: var(--typeahead-bg);
+  border: 1px solid var(--typeahead-border-color);
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Individual suggestion */
+.tt-suggestion {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--typeahead-text);
+}
+
+/* Hover and active state for suggestions */
+.tt-suggestion:hover,
+.tt-suggestion.tt-cursor {
+  cursor: pointer;
+  color: var(--typeahead-bg);
+  background-color: var(--typeahead-primary);
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
+
+/* Container for typeahead */
+.tt-container {
+  position: relative;
+}
+
+/* Responsive styles */
+@media (max-width: 576px) {
+  .tt-menu {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .tt-suggestion {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
