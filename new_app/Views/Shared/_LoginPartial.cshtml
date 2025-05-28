@@ -1,5 +1,6 @@
-@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> SignInManager
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
@@ -9,7 +10,7 @@
     </li>
     <li class="nav-item">
         <form class="form-inline" asp-area="" asp-controller="Account" asp-action="LogOff" method="post">
-            <button type="submit" class="nav-link btn btn-link text-light">Logout</button>
+            <button type="submit" class="nav-link btn btn-link text-light">Log off</button>
         </form>
     </li>
 }
@@ -19,7 +20,7 @@ else
         <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Log in</a>
     </li>
 }
 </ul>
