@@ -1,7 +1,7 @@
-using System;
-
 namespace HotelReservationSystem.DTOs
 {
+    using System.ComponentModel.DataAnnotations;
+
     /// <summary>
     /// Data Transfer Object for Country entity
     /// </summary>
@@ -15,6 +15,7 @@ namespace HotelReservationSystem.DTOs
         /// <summary>
         /// Name of the country
         /// </summary>
-        public string Name { get; set; } = string.Empty;
+        [Required]
+        public required string Name { get; set; } = string.Empty;
     }
 }
