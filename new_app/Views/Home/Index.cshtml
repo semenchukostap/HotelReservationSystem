@@ -1,41 +1,15 @@
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Hotel Listings";
 }
 
-<div class="bg-light p-5 rounded-3 mb-4">
-    <div class="container-fluid py-5">
-        <h1 class="display-4">Book&Go</h1>
-        <p class="fs-4">Welcome to the ultimate Hotel Reservation System - Book your perfect stay with ease!</p>
-        <a class="btn btn-primary btn-lg" asp-controller="Home" asp-action="About">Learn more</a>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h2 class="card-title">Hotels</h2>
-                <p class="card-text">Browse our selection of premium hotels around the world.</p>
-                <a class="btn btn-primary" asp-controller="Hotels" asp-action="ReadOnlyList">View Hotels</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h2 class="card-title">Customers</h2>
-                <p class="card-text">Manage customer information and bookings.</p>
-                <a class="btn btn-primary" asp-controller="Customers" asp-action="Index">View Customers</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h2 class="card-title">Orders</h2>
-                <p class="card-text">Track and manage hotel bookings and reservations.</p>
-                <a class="btn btn-primary" asp-controller="Orders" asp-action="Index">View Orders</a>
-            </div>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-3">Welcome to Our Hotels</h1>
+            <p class="lead mb-4">Discover the perfect accommodations for your next trip</p>
+            <a class="btn btn-primary" asp-controller="Hotels" asp-action="ReadOnlyList">
+                <i class="bi bi-search me-2"></i>Browse All Hotels
+            </a>
         </div>
     </div>
 </div>
