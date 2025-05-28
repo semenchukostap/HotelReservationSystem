@@ -3,9 +3,11 @@ using HotelReservationSystem.Models;
 using HotelReservationSystem.Services;
 using HotelReservationSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HotelReservationSystem.Controllers
 {
+    [Route("customers")]
     public class CustomersController : Controller
     {
         private readonly ICustomerService _customerService;
@@ -17,12 +19,14 @@ namespace HotelReservationSystem.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("")]
         public async Task<IActionResult> Index()
         {
             var customers = await _customerService.GetAllCustomersAsync();
             return View(customers);
         }
 
+        [HttpGet("form/{id?}")]
         public async Task<IActionResult> Form(int? id)
         {
             if (!id.HasValue)
@@ -36,9 +40,9 @@ namespace HotelReservationSystem.Controllers
             return View(viewModel);
         }
 
-        [HttpPost]
+        [HttpPost("save")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(CustomerViewModel viewModel)
+        public async Task<IActionResult> Save([FromForm] CustomerViewModel viewModel)
         {
             if (!ModelState.IsValid)
                 return View("Form", viewModel);
