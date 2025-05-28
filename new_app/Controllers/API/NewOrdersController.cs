@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 
 namespace HotelReservationSystem.Controllers.API
 {
@@ -72,7 +73,7 @@ namespace HotelReservationSystem.Controllers.API
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving orders");
-                return StatusCode(500, "An error occurred while retrieving orders");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving orders");
             }
         }
 
@@ -99,7 +100,7 @@ namespace HotelReservationSystem.Controllers.API
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving order with ID: {OrderId}", id);
-                return StatusCode(500, "An error occurred while retrieving the order");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the order");
             }
         }
 
@@ -161,7 +162,7 @@ namespace HotelReservationSystem.Controllers.API
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while creating a new order");
-                return StatusCode(500, "An error occurred while creating the order");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the order");
             }
         }
 
@@ -247,7 +248,7 @@ namespace HotelReservationSystem.Controllers.API
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while updating order with ID: {OrderId}", id);
-                return StatusCode(500, "An error occurred while updating the order");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the order");
             }
         }
 
@@ -276,7 +277,7 @@ namespace HotelReservationSystem.Controllers.API
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while deleting order with ID: {OrderId}", id);
-                return StatusCode(500, "An error occurred while deleting the order");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the order");
             }
         }
 
@@ -364,7 +365,7 @@ namespace HotelReservationSystem.Controllers.API
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while searching for orders");
-                return StatusCode(500, "An error occurred while searching for orders");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while searching for orders");
             }
         }
     }
