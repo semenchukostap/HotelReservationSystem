@@ -4,39 +4,39 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace HotelReservationSystem.Models
 {
     /// <summary>
-    /// Represents a hotel in the reservation system
+    /// Represents a hotel in the system with its details and pricing information
     /// </summary>
     public class Hotel
     {
         /// <summary>
-        /// Unique identifier for the hotel
+        /// The unique identifier for the hotel
         /// </summary>
         [Display(Name = "Hotel ID")]
         public int Id { get; set; }
 
         /// <summary>
-        /// Name of the hotel
+        /// The name of the hotel
         /// </summary>
-        [Required(ErrorMessage = "Hotel name is required")]
-        [StringLength(255, ErrorMessage = "Hotel name cannot exceed 255 characters")]
+        [Required(ErrorMessage = "The hotel name is required")]
+        [StringLength(255, ErrorMessage = "Name cannot exceed 255 characters")]
         [Display(Name = "Hotel Name")]
         public required string Name { get; set; }
 
         /// <summary>
-        /// Country object associated with the hotel
+        /// The country where the hotel is located
         /// </summary>
         [ValidateNever]
         public Country? Country { get; set; }
 
         /// <summary>
-        /// Foreign key for the country
+        /// The country ID where the hotel is located
         /// </summary>
-        [Required(ErrorMessage = "Country is required")]
+        [Required(ErrorMessage = "Please select a country")]
         [Display(Name = "Country")]
         public int CountryId { get; set; }
 
         /// <summary>
-        /// City where the hotel is located
+        /// The city where the hotel is located
         /// </summary>
         [Required(ErrorMessage = "City is required")]
         [StringLength(50, ErrorMessage = "City name cannot exceed 50 characters")]
@@ -44,24 +44,24 @@ namespace HotelReservationSystem.Models
         public required string City { get; set; }
 
         /// <summary>
-        /// Star rating of the hotel (1-5)
+        /// The quality rating of the hotel (in stars)
         /// </summary>
-        [Required(ErrorMessage = "Star rating is required")]
-        [Range(1, 5, ErrorMessage = "Star rating must be between 1 and 5")]
-        [Display(Name = "Stars")]
+        [Required(ErrorMessage = "Please specify the star rating")]
+        [Range(1, 5, ErrorMessage = "Stars must be between 1 and 5")]
+        [Display(Name = "Star Rating")]
         public int Stars { get; set; }
 
         /// <summary>
-        /// Price per night for a standard room
+        /// The price per night in USD
         /// </summary>
         [Required(ErrorMessage = "Price is required")]
-        [Range(1, 10000, ErrorMessage = "Price must be between 1 and 10,000")]
+        [Range(1, 1000, ErrorMessage = "Price must be between 1 and 1000")]
         [Display(Name = "Price Per Night")]
         [DataType(DataType.Currency)]
         public double PricePerNight { get; set; }
 
         /// <summary>
-        /// Indicates whether the hotel offers all-inclusive packages
+        /// Indicates if the hotel offers all-inclusive packages
         /// </summary>
         [Required]
         [Display(Name = "All Inclusive")]
