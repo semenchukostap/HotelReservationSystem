@@ -1,0 +1,119 @@
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<h3 class="mb-4">Hotels</h3>
+
+<div class="mb-3">
+    <a asp-controller="Hotels" asp-action="New" class="btn btn-primary">New Hotel</a>
+</div>
+
+<div class="table-responsive">
+    <table id="hotels" class="table table-striped table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Stars</th>
+                <th>Price</th>
+                <th>All Inclusive</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts
+{
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/bootbox/bootbox.min.js"></script>
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $("#hotels").DataTable({
+                ajax: {
+                    url: "/api/hotels",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, hotel) {
+                            return `<a href='/hotels/edit/${hotel.id}'>${hotel.name}</a>`;
+                        }
+                    },
+                    {
+                        data: "countryName"
+                    },
+                    {
+                        data: "city"
+                    },
+                    {
+                        data: "stars"
+                    },
+                    {
+                        data: "pricePerNight"
+                    },
+                    {
+                        data: "isAllInclusive",
+                        render: function (data) {
+                            return data ? "Yes" : "No";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return `<button class='btn btn-sm btn-danger js-delete' data-hotel-id='${data}'>Delete</button>`;
+                        }
+                    }
+                ]
+            });
+
+            $("#hotels").on("click", ".js-delete", function () {
+                const button = $(this);
+                const hotelId = button.attr("data-hotel-id");
+
+                bootbox.confirm({
+                    title: "Delete Hotel",
+                    message: "Are you sure you want to delete this hotel?",
+                    buttons: {
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-secondary"
+                        },
+                        confirm: {
+                            label: "Delete",
+                            className: "btn-danger"
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            fetch(`/api/hotels/${hotelId}`, {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    const table = $("#hotels").DataTable();
+                                    table.row(button.parents("tr")).remove().draw();
+                                    toastr.success("Hotel successfully removed.");
+                                } else {
+                                    toastr.error("An error occurred while deleting the hotel.");
+                                }
+                            })
+                            .catch(error => {
+                                toastr.error("An error occurred while deleting the hotel.");
+                                console.error(error);
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
