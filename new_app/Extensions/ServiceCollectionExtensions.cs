@@ -7,6 +7,8 @@ using HotelReservationSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using HotelReservationSystem.Mappings;
+using AutoMapper;
 
 namespace HotelReservationSystem.Extensions
 {
@@ -93,11 +95,11 @@ namespace HotelReservationSystem.Extensions
         }
 
         /// <summary>
-        /// Adds AutoMapper and configures profiles
+        /// Adds AutoMapper and configures mapping profiles for the application
         /// </summary>
         public static IServiceCollection AddAutoMapperServices(this IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(Program).Assembly);
+            services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
             
             return services;
         }
@@ -122,6 +124,9 @@ namespace HotelReservationSystem.Extensions
         {
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddHttpContextAccessor();
+            
+            // Register AutoMapper services
+            services.AddAutoMapperServices();
             
             // Register any additional application specific services here
             
