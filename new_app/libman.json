@@ -39,11 +39,11 @@
       ]
     },
     {
-      "library": "datatables.net@2.1.1",
+      "library": "datatables@1.10.21",
       "destination": "wwwroot/lib/datatables",
       "files": [
-        "jquery.dataTables.min.js",
-        "jquery.dataTables.js"
+        "js/jquery.dataTables.min.js",
+        "js/jquery.dataTables.js"
       ]
     },
     {
@@ -87,19 +87,12 @@
       ]
     },
     {
-      "library": "popper.js@2.11.8",
+      "provider": "unpkg",
+      "library": "@popperjs/core@2.11.8",
       "destination": "wwwroot/lib/popper",
       "files": [
-        "umd/popper.min.js",
-        "umd/popper.js"
-      ]
-    },
-    {
-      "library": "modernizr@2.8.3",
-      "destination": "wwwroot/lib/modernizr",
-      "files": [
-        "modernizr.min.js",
-        "modernizr.js"
+        "dist/umd/popper.min.js",
+        "dist/umd/popper.js"
       ]
     },
     {
