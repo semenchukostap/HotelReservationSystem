@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Hotel Reservation System</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/bootstrap-flatty.css" rel="stylesheet" />
+    <link href="~/css/toastr.min.css" rel="stylesheet" />
+    <link href="~/css/typeahead.css" rel="stylesheet" />
+    <link href="~/css/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Hotel Reservation System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Hotels", "Index", "Hotels", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Customers", "Index", "Customers", null, new { @class = "nav-link" })</li>
+                    @if (User.IsInRole(RoleName.CanManageHotels))
+                    {
+                        <li class="nav-item">@Html.ActionLink("New Order", "New", "Orders", null, new { @class = "nav-link" })</li>
+                    }
+                    <li class="nav-item">@Html.ActionLink("Orders", "Index", "Orders", null, new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("About", "About", "Home", null, new { @class = "nav-link" })</li>
+                </ul>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Hotel Reservation System</p>
+        </footer>
+    </div>
+
+    <script src="~/js/jquery-3.7.1.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/toastr.min.js"></script>
+    <script src="~/js/typeahead.bundle.min.js"></script>
+    <script src="~/js/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/js/bootbox.min.js"></script>
+    
+    @await RenderSectionAsync("scripts", required: false)
+</body>
+</html>
