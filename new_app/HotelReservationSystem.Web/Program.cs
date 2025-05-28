@@ -4,11 +4,12 @@ using HotelReservationSystem.Services;
 using HotelReservationSystem.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Database Configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? 
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -17,7 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// Configure Identity
+// 2. Identity Configuration
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
         options.SignIn.RequireConfirmedAccount = true;
         options.Password.RequireDigit = true;
@@ -29,13 +30,19 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Configure Authorization Policies
+// 3. Authorization Configuration
 builder.Services.AddAuthorization(options => {
     options.AddPolicy("CanManageHotels", policy =>
         policy.RequireRole(RoleConstants.Admin));
+    options.AddPolicy("ViewReservations", policy =>
+        policy.RequireRole(RoleConstants.Admin, RoleConstants.Staff));
+    options.AddPolicy("ManageUsers", policy =>
+        policy.RequireRole(RoleConstants.Admin));
+    options.AddPolicy("CreateBooking", policy =>
+        policy.RequireAuthenticatedUser());
 });
 
-// Configure external login providers if needed
+// 4. External Authentication Configuration
 /*
 builder.Services.AddAuthentication()
     .AddFacebook(options =>
@@ -50,16 +57,21 @@ builder.Services.AddAuthentication()
     });
 */
 
-// Configure controller setup
+// 5. MVC and API Configuration
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options => {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// Add AutoMapper
+// 6. Razor Pages Configuration
+builder.Services.AddRazorPages();
+
+// 7. AutoMapper Configuration
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Register application services
+// 8. Application Services Registration
 builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
@@ -67,9 +79,10 @@ builder.Services.AddScoped<ICountryService, CountryService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// 9. HTTP Request Pipeline Configuration
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseMigrationsEndPoint();
 }
 else
@@ -86,22 +99,38 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configure routing
+// 10. Endpoint Configuration
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
     
 app.MapRazorPages();
 
-// Seed initial data if needed
+// 11. Database Initialization
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<ApplicationDbContext>();
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    
-    await DbInitializer.Initialize(dbContext, userManager, roleManager);
+    try
+    {
+        var services = scope.ServiceProvider;
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Starting database initialization");
+        await DbInitializer.Initialize(dbContext, userManager, roleManager);
+        logger.LogInformation("Database initialization completed successfully");
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while initializing the database");
+        
+        if (app.Environment.IsDevelopment())
+        {
+            throw; // Re-throw in development for immediate feedback
+        }
+    }
 }
 
 app.Run();
