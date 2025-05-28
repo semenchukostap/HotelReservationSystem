@@ -3,18 +3,35 @@
     ViewData["Title"] = "Error";
 }
 
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row">
-        <div class="col-md-12">
-            <h1 class="text-danger">Error</h1>
-            <h2 class="text-danger">An error occurred while processing your request.</h2>
+        <div class="col-md-12 text-center mb-4">
+            <h1 class="display-4 text-danger">Oops!</h1>
+            <h2 class="text-danger mb-4">An error occurred while processing your request.</h2>
+        </div>
+    </div>
 
-            @if (Model.ShowRequestId)
-            {
-                <p>
-                    <strong>Request ID:</strong> <code>@Model.RequestId</code>
-                </p>
-            }
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">Error Details</h4>
+                    
+                    @if (Model.ShowRequestId)
+                    {
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="me-2"><strong>Request ID:</strong></span>
+                            <code class="bg-light px-2 py-1 rounded">@Model.RequestId</code>
+                        </div>
+                    }
+                    
+                    <div class="alert alert-danger">
+                        <p class="mb-0">
+                            We apologize for the inconvenience. Our team has been notified of this issue.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
             <div class="alert alert-info mt-4">
                 <h4>Development Mode</h4>
@@ -25,6 +42,17 @@
                     <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
                     It can result in displaying sensitive information from exceptions to end users.
                 </p>
+                <environment include="Development">
+                    <div class="alert alert-warning mt-3">
+                        <strong>Note:</strong> You are currently running in Development mode.
+                    </div>
+                </environment>
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                    <i class="bi bi-house-door me-2"></i>Return to Home Page
+                </a>
             </div>
         </div>
     </div>
