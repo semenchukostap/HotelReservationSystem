@@ -53,7 +53,7 @@
                     {
                         data: "pricePerNight",
                         render: (data) => {
-                            return data.toFixed(2);
+                            return `$${data.toFixed(2)}`;
                         }
                     },
                     {
@@ -71,10 +71,10 @@
                 ]
             });
 
-            $("#hotels").on('click', '.js-delete', function () {
+            $("#hotels").on('click', '.js-delete', function() {
                 const button = $(this);
 
-                bootbox.confirm("Are you sure you want to delete this hotel?", (result) => {
+                bootbox.confirm("Are you sure you want to delete this hotel?", result => {
                     if (result) {
                         $.ajax({
                             url: `/api/hotels/${button.attr("data-hotel-id")}`,
@@ -85,7 +85,7 @@
                             },
                             error: (xhr, status, error) => {
                                 toastr.error("An error occurred while deleting the hotel.");
-                                console.error("Delete error:", error);
+                                console.error(`Delete error: ${error}`);
                             }
                         });
                     }
