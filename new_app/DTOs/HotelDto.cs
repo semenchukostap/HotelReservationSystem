@@ -1,0 +1,31 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace HotelReservationSystem.DTOs
+{
+    public class HotelDto
+    {
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(255)]
+        public required string Name { get; set; }
+
+        public int CountryId { get; set; }
+        public string? CountryName { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public required string City { get; set; }
+
+        [Required]
+        [Range(1, 5)]
+        public int Stars { get; set; }
+
+        [Required]
+        [Range(1, 1000)]
+        public double PricePerNight { get; set; }
+
+        [Required]
+        public bool IsAllInclusive { get; set; }
+    }
+}
