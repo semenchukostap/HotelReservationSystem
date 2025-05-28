@@ -8,5 +8,6 @@ public class Country
 
     [Required]
     [MaxLength(255)]
-    public string Name { get; set; } = string.Empty;
+    [Display(Name = "Country Name")]
+    public required string Name { get; set; }
 }
