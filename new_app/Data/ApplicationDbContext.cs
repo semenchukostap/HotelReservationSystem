@@ -21,6 +21,23 @@ namespace new_app.Data
             base.OnModelCreating(builder);
             
             // Configure entity relationships and constraints here
+            builder.Entity<Hotel>()
+                .HasOne(h => h.Country)
+                .WithMany()
+                .HasForeignKey(h => h.CountryId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            builder.Entity<Order>()
+                .HasOne(o => o.Customer)
+                .WithMany()
+                .HasForeignKey("CustomerId")
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            builder.Entity<Order>()
+                .HasOne(o => o.Hotel)
+                .WithMany()
+                .HasForeignKey("HotelId")
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
