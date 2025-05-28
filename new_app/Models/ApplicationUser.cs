@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace HotelReservationSystem.Models
+namespace HotelReservationSystem.Models;
+
+public class ApplicationUser : IdentityUser
 {
-    public class ApplicationUser : IdentityUser
-    {
-        [Required]
-        [MaxLength(20)]
-        public string Phone { get; set; } = string.Empty;
-    }
+    [Required]
+    [MaxLength(20)]
+    public required string Phone { get; set; }
 }
