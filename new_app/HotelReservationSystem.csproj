@@ -5,7 +5,22 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>HotelReservationSystem</RootNamespace>
+    <UserSecretsId>aspnet-HotelReservationSystem-53E4BB9B-8EBE-4632-8FBE-69E5AFCBD78A</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Services\" />
+    <Folder Include="Data\" />
+    <Folder Include="Views\" />
+    <Folder Include="wwwroot\" />
+    <Folder Include="Utilities\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Middleware\" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Entity Framework Core - replaces EntityFramework 6.4.4 -->
@@ -33,6 +48,7 @@
     
     <!-- Development & Design Tools -->
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.0" Condition="'$(Configuration)' == 'Debug'" />
   </ItemGroup>
 
   <!-- Client-side libraries will be managed via LibMan instead of NuGet packages -->
