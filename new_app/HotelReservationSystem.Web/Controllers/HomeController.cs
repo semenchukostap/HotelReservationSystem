@@ -2,6 +2,7 @@ using System.Diagnostics;
 using HotelReservationSystem.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace HotelReservationSystem.Web.Controllers
 {
@@ -15,7 +16,8 @@ namespace HotelReservationSystem.Web.Controllers
             _logger = logger;
         }
 
-        // [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new[] { "*" })]
+        // Use ResponseCache attribute instead of OutputCache, but it's commented out since it was commented in original
+        // [ResponseCache(Duration = 50, Location = ResponseCacheLocation.Server, VaryByQueryKeys = new[] { "*" })]
         public IActionResult Index()
         {
             return View();
@@ -30,21 +32,6 @@ namespace HotelReservationSystem.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        [Route("/error")]
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult HandleError(int? statusCode = null)
-        {
-            var viewModel = new ErrorViewModel
-            {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-                StatusCode = statusCode
-            };
-
-            _logger.LogError($"An error occurred. RequestId: {viewModel.RequestId}, StatusCode: {statusCode}");
-            
-            return View("Error", viewModel);
         }
     }
 }
