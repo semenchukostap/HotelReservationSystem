@@ -16,5 +16,5 @@ public class CountryDto
     /// Gets or sets the name of the country
     /// </summary>
     [Required]
-    public required string Name { get; set; }
+    public required string Name { get; set; } = string.Empty;
 }
