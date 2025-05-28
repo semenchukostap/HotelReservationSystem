@@ -1,41 +1,41 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using HotelReservationSystem.Models;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using new_app.Models;
+using System.Diagnostics;
 
-namespace HotelReservationSystem.Controllers;
-
-public class HomeController : Controller
+namespace new_app.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    [AllowAnonymous]
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        private readonly IMemoryCache _memoryCache;
+        private readonly ILogger<HomeController> _logger;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        public HomeController(IMemoryCache memoryCache, ILogger<HomeController> logger)
+        {
+            _memoryCache = memoryCache;
+            _logger = logger;
+        }
 
-    public IActionResult About()
-    {
-        return View();
-    }
+        // Use ASP.NET Core Response Caching middleware instead of OutputCache attribute
+        // This is configured in Program.cs
+        [ResponseCache(Duration = 50, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new[] { "*" })]
+        public IActionResult Index()
+        {
+            return View();
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-}
+        public IActionResult About()
+        {
+            return View();
+        }
 
-namespace HotelReservationSystem.Models
-{
-    public class ErrorViewModel
-    {
-        public string? RequestId { get; set; }
-
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }
