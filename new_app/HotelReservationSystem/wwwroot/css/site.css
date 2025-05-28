@@ -1,0 +1,40 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.field-validation-error {
+    color: #ff3333;
+    font-weight: bold;
+}
+
+.input-validation-error {
+    border: 2px solid #ff3333;
+}
+
+.validation-summary-errors {
+    color: #ff3333;
+    font-weight: bold;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
