@@ -1,0 +1,4 @@
+This file confirms that all changes to the net-migration-v20 branch have been completed and are ready to be pushed.
+
+Changes include:
+- Configured SSL port 44349 in launchSettings.json to match the legacy application's port
