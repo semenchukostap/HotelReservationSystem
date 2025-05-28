@@ -18,15 +18,18 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        _logger.LogInformation("Index page was accessed");
         return View();
     }
 
     public IActionResult About()
     {
+        _logger.LogInformation("About page was accessed");
         return View();
     }
 
     // Example of how to use ResponseCache instead of OutputCache from .NET Framework
+    // In legacy codebase, this was done using [OutputCache(Duration = 60, VaryByParam = "none")]
     // [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByHeader = "User-Agent")]
     // public IActionResult CachedPage()
     // {
