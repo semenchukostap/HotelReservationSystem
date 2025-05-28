@@ -1,12 +1,14 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using HotelReservationSystem.Models;
-using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using HotelReservationSystem.Models;
 
 namespace HotelReservationSystem.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -16,16 +18,22 @@ namespace HotelReservationSystem.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            _logger.LogInformation("Index page visited at {Time}", DateTime.UtcNow);
-            return await Task.FromResult(View());
+            _logger.LogInformation(
+                "Index page visited at {VisitTime}", 
+                DateTime.UtcNow);
+            
+            return View();
         }
 
-        public async Task<IActionResult> About()
+        public IActionResult About()
         {
-            _logger.LogInformation("About page visited at {Time}", DateTime.UtcNow);
-            return await Task.FromResult(View());
+            _logger.LogInformation(
+                "About page visited at {VisitTime}", 
+                DateTime.UtcNow);
+            
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
