@@ -1,6 +1,7 @@
 using HotelReservationSystem.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
 namespace HotelReservationSystem.Data
@@ -49,18 +50,15 @@ namespace HotelReservationSystem.Data
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
-                
+
             base.OnModelCreating(builder);
 
-            // Apply entity configurations
+            // Apply entity configurations through IEntityTypeConfiguration classes
             builder.ApplyConfiguration(new HotelConfiguration());
             builder.ApplyConfiguration(new OrderConfiguration());
             builder.ApplyConfiguration(new CustomerConfiguration());
-            
-            ConfigureHotelEntity(builder);
-            ConfigureOrderEntity(builder);
-            ConfigureApplicationUserEntity(builder);
-            ConfigureCustomerEntity(builder);
+            builder.ApplyConfiguration(new CountryConfiguration());
+            builder.ApplyConfiguration(new ApplicationUserConfiguration());
         }
 
         /// <summary>
@@ -69,139 +67,15 @@ namespace HotelReservationSystem.Data
         /// <param name="optionsBuilder">The options builder used to configure the context.</param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLazyLoadingProxies();
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseLazyLoadingProxies();
+            }
+            
             base.OnConfiguring(optionsBuilder);
         }
-
-        /// <summary>
-        /// Configures the Hotel entity.
-        /// </summary>
-        /// <param name="builder">The model builder instance.</param>
-        private void ConfigureHotelEntity(ModelBuilder builder)
-        {
-            builder.Entity<Hotel>(entity =>
-            {
-                // Primary key
-                entity.HasKey(h => h.Id);
-                
-                // Relationships
-                entity.HasOne(h => h.Country)
-                    .WithMany(c => c.Hotels)
-                    .HasForeignKey(h => h.CountryId)
-                    .IsRequired()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                // Properties
-                entity.Property(h => h.Name)
-                    .IsRequired()
-                    .HasMaxLength(255);
-
-                entity.Property(h => h.City)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(h => h.Stars)
-                    .IsRequired();
-
-                entity.Property(h => h.PricePerNight)
-                    .IsRequired()
-                    .HasPrecision(18, 2);
-                
-                // Indexes
-                entity.HasIndex(h => h.Name);
-                entity.HasIndex(h => new { h.CountryId, h.City });
-            });
-        }
-
-        /// <summary>
-        /// Configures the Order entity.
-        /// </summary>
-        /// <param name="builder">The model builder instance.</param>
-        private void ConfigureOrderEntity(ModelBuilder builder)
-        {
-            builder.Entity<Order>(entity => 
-            {
-                // Primary key
-                entity.HasKey(o => o.Id);
-                
-                // Relationships
-                entity.HasOne(o => o.Customer)
-                    .WithMany(c => c.Orders)
-                    .HasForeignKey(o => o.CustomerId)
-                    .IsRequired()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(o => o.Hotel)
-                    .WithMany(h => h.Orders)
-                    .HasForeignKey(o => o.HotelId)
-                    .IsRequired()
-                    .OnDelete(DeleteBehavior.Restrict);
-                
-                // Properties
-                entity.Property(o => o.TotalPrice)
-                    .IsRequired()
-                    .HasPrecision(18, 2);
-                    
-                entity.Property(o => o.CreatedDate)
-                    .IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()");
-                
-                // Indexes
-                entity.HasIndex(o => o.CreatedDate);
-            });
-        }
-
-        /// <summary>
-        /// Configures the ApplicationUser entity.
-        /// </summary>
-        /// <param name="builder">The model builder instance.</param>
-        private void ConfigureApplicationUserEntity(ModelBuilder builder)
-        {
-            builder.Entity<ApplicationUser>(entity => 
-            {
-                // Properties
-                entity.Property(u => u.Phone)
-                    .IsRequired()
-                    .HasMaxLength(20);
-                
-                entity.Property(u => u.FirstName)
-                    .HasMaxLength(100);
-                
-                entity.Property(u => u.LastName)
-                    .HasMaxLength(100);
-            });
-        }
-
-        /// <summary>
-        /// Configures the Customer entity.
-        /// </summary>
-        /// <param name="builder">The model builder instance.</param>
-        private void ConfigureCustomerEntity(ModelBuilder builder)
-        {
-            builder.Entity<Customer>(entity => 
-            {
-                // Primary key
-                entity.HasKey(c => c.Id);
-                
-                // Properties
-                entity.Property(c => c.Name)
-                    .IsRequired()
-                    .HasMaxLength(255);
-                
-                entity.Property(c => c.Email)
-                    .IsRequired()
-                    .HasMaxLength(255);
-                
-                entity.Property(c => c.Phone)
-                    .HasMaxLength(20);
-                
-                // Indexes
-                entity.HasIndex(c => c.Email)
-                    .IsUnique();
-            });
-        }
     }
-    
+
     /// <summary>
     /// Configuration class for the Hotel entity.
     /// </summary>
@@ -215,8 +89,10 @@ namespace HotelReservationSystem.Data
         {
             builder.ToTable("Hotels");
             
+            // Primary key
             builder.HasKey(h => h.Id);
             
+            // Properties
             builder.Property(h => h.Name)
                 .IsRequired()
                 .HasMaxLength(255);
@@ -224,13 +100,30 @@ namespace HotelReservationSystem.Data
             builder.Property(h => h.Description)
                 .HasMaxLength(2000);
                 
+            builder.Property(h => h.City)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.Property(h => h.Stars)
+                .IsRequired();
+
+            builder.Property(h => h.PricePerNight)
+                .IsRequired()
+                .HasPrecision(18, 2);
+                
+            // Relationships
             builder.HasOne(h => h.Country)
                 .WithMany(c => c.Hotels)
                 .HasForeignKey(h => h.CountryId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
+                
+            // Indexes for performance
+            builder.HasIndex(h => h.Name);
+            builder.HasIndex(h => new { h.CountryId, h.City });
         }
     }
-    
+
     /// <summary>
     /// Configuration class for the Order entity.
     /// </summary>
@@ -244,20 +137,46 @@ namespace HotelReservationSystem.Data
         {
             builder.ToTable("Orders");
             
+            // Primary key
             builder.HasKey(o => o.Id);
             
+            // Properties
             builder.Property(o => o.CheckInDate)
                 .IsRequired();
                 
             builder.Property(o => o.CheckOutDate)
                 .IsRequired();
                 
+            builder.Property(o => o.TotalPrice)
+                .IsRequired()
+                .HasPrecision(18, 2);
+                
+            builder.Property(o => o.CreatedDate)
+                .IsRequired()
+                .HasDefaultValueSql("GETUTCDATE()");
+                
             // Add a check constraint to ensure checkout date is after checkin date
             builder.HasCheckConstraint("CK_Orders_CheckOutDate_After_CheckInDate", 
                 "CheckOutDate > CheckInDate");
+                
+            // Relationships
+            builder.HasOne(o => o.Customer)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(o => o.CustomerId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(o => o.Hotel)
+                .WithMany(h => h.Orders)
+                .HasForeignKey(o => o.HotelId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            // Indexes
+            builder.HasIndex(o => o.CreatedDate);
         }
     }
-    
+
     /// <summary>
     /// Configuration class for the Customer entity.
     /// </summary>
@@ -271,8 +190,10 @@ namespace HotelReservationSystem.Data
         {
             builder.ToTable("Customers");
             
+            // Primary key
             builder.HasKey(c => c.Id);
             
+            // Properties
             builder.Property(c => c.Name)
                 .IsRequired()
                 .HasMaxLength(255);
@@ -281,8 +202,68 @@ namespace HotelReservationSystem.Data
                 .IsRequired()
                 .HasMaxLength(255);
                 
+            builder.Property(c => c.Phone)
+                .HasMaxLength(20);
+                
+            // Indexes
             builder.HasIndex(c => c.Email)
                 .IsUnique();
+        }
+    }
+    
+    /// <summary>
+    /// Configuration class for the Country entity.
+    /// </summary>
+    public class CountryConfiguration : IEntityTypeConfiguration<Country>
+    {
+        /// <summary>
+        /// Configures the entity of type Country.
+        /// </summary>
+        /// <param name="builder">The builder to be used to configure the entity type.</param>
+        public void Configure(EntityTypeBuilder<Country> builder)
+        {
+            builder.ToTable("Countries");
+            
+            // Primary key
+            builder.HasKey(c => c.Id);
+            
+            // Properties
+            builder.Property(c => c.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+                
+            builder.Property(c => c.Code)
+                .IsRequired()
+                .HasMaxLength(3);
+                
+            // Indexes
+            builder.HasIndex(c => c.Name);
+            builder.HasIndex(c => c.Code)
+                .IsUnique();
+        }
+    }
+    
+    /// <summary>
+    /// Configuration class for the ApplicationUser entity.
+    /// </summary>
+    public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
+    {
+        /// <summary>
+        /// Configures the entity of type ApplicationUser.
+        /// </summary>
+        /// <param name="builder">The builder to be used to configure the entity type.</param>
+        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
+        {
+            // Properties
+            builder.Property(u => u.Phone)
+                .IsRequired()
+                .HasMaxLength(20);
+            
+            builder.Property(u => u.FirstName)
+                .HasMaxLength(100);
+            
+            builder.Property(u => u.LastName)
+                .HasMaxLength(100);
         }
     }
 }
