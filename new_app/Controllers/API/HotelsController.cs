@@ -25,6 +25,7 @@ public class HotelsController : ControllerBase
 
     // GET: api/hotels
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<HotelDto>>> GetHotels()
     {
         var hotels = await _context.Hotels
@@ -36,6 +37,7 @@ public class HotelsController : ControllerBase
 
     // GET: api/hotels/5
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<HotelDto>> GetHotel(int id)
     {
         var hotel = await _context.Hotels
@@ -55,11 +57,18 @@ public class HotelsController : ControllerBase
     [Authorize(Roles = RoleName.Admin)]
     public async Task<ActionResult<HotelDto>> CreateHotel(HotelDto hotelDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var hotel = _mapper.Map<Hotel>(hotelDto);
         _context.Hotels.Add(hotel);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetHotel), new { id = hotel.Id }, _mapper.Map<HotelDto>(hotel));
+        hotelDto.Id = hotel.Id;
+
+        return CreatedAtAction(nameof(GetHotel), new { id = hotel.Id }, hotelDto);
     }
 
     // PUT: api/hotels/5
@@ -87,7 +96,7 @@ public class HotelsController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!await HotelExists(id))
+            if (!await _context.Hotels.AnyAsync(h => h.Id == id))
             {
                 return NotFound();
             }
@@ -115,10 +124,5 @@ public class HotelsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private async Task<bool> HotelExists(int id)
-    {
-        return await _context.Hotels.AnyAsync(h => h.Id == id);
     }
 }
