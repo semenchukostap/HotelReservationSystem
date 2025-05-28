@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace HotelReservationSystem.Models
 {
     /// <summary>
