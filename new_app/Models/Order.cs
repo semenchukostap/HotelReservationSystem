@@ -9,11 +9,11 @@ namespace HotelReservationSystem.Models
 
         [Required]
         [ValidateNever]
-        public required Customer Customer { get; set; }
+        public Customer Customer { get; set; } = null!;
         
         [Required]
         [ValidateNever]
-        public required Hotel Hotel { get; set; }
+        public Hotel Hotel { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Date)]
