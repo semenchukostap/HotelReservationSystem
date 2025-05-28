@@ -1,11 +1,13 @@
 using HotelReservationSystem.Models;
 using HotelReservationSystem.ViewModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelReservationSystem.Controllers;
 
+[Authorize]
 public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -24,51 +26,7 @@ public class AccountController : Controller
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Register()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    [AllowAnonymous]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(RegisterViewModel model)
-    {
-        if (ModelState.IsValid)
-        {
-            var user = new ApplicationUser
-            {
-                UserName = model.Email,
-                Email = model.Email,
-                Phone = model.Phone
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User created a new account with password.");
-
-                // Add role to user
-                await _userManager.AddToRoleAsync(user, RoleName.User);
-
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("Index", "Home");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-        }
-
-        // If we got this far, something failed, redisplay form
-        return View(model);
-    }
-
-    [HttpGet]
-    [AllowAnonymous]
-    public IActionResult Login(string? returnUrl = null)
+    public IActionResult Login(string returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;
         return View();
@@ -77,7 +35,7 @@ public class AccountController : Controller
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+    public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;
         if (ModelState.IsValid)
@@ -106,21 +64,61 @@ public class AccountController : Controller
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Lockout()
+    public IActionResult Register()
     {
         return View();
     }
 
     [HttpPost]
+    [AllowAnonymous]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> Register(RegisterViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                Phone = model.Phone
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("User created a new account with password.");
+                await _userManager.AddToRoleAsync(user, RoleName.User);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+            
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+
+        // If we got this far, something failed, redisplay form
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> LogOff()
     {
         await _signInManager.SignOutAsync();
         _logger.LogInformation("User logged out.");
         return RedirectToAction(nameof(HomeController.Index), "Home");
     }
 
-    private IActionResult RedirectToLocal(string? returnUrl)
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult Lockout()
+    {
+        return View();
+    }
+
+    private IActionResult RedirectToLocal(string returnUrl)
     {
         if (Url.IsLocalUrl(returnUrl))
         {
