@@ -41,15 +41,17 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         $(document).ready(function () {
-            var vm = {};
+            const vm = {};
 
             // CUSTOMERS
-            var customers = new Bloodhound({
+            const customers = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
@@ -62,12 +64,12 @@
                 name: 'customers',
                 display: 'name',
                 source: customers
-            }).on("typeahead:select", function (e, customer) {
+            }).on("typeahead:select", (e, customer) => {
                 vm.customerId = customer.id;
             });
 
             // HOTELS
-            var hotels = new Bloodhound({
+            const hotels = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
@@ -80,7 +82,7 @@
                 name: 'hotels',
                 display: 'name',
                 source: hotels
-            }).on("typeahead:select", function (e, hotel) {
+            }).on("typeahead:select", (e, hotel) => {
                 vm.hotelId = hotel.id;
             });
 
@@ -94,7 +96,7 @@
             }, "Please select a valid hotel.");
 
             // VALIDATE AND SUBMIT
-            var validator = $("#newOrder").validate({
+            const validator = $("#newOrder").validate({
                 submitHandler: function () {
                     bootbox.confirm("Are you sure you want to place this order?", function (result) {
                         if (result) {
