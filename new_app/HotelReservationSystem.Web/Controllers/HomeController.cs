@@ -1,8 +1,7 @@
-using System.Diagnostics;
 using HotelReservationSystem.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace HotelReservationSystem.Web.Controllers
 {
@@ -16,8 +15,6 @@ namespace HotelReservationSystem.Web.Controllers
             _logger = logger;
         }
 
-        // Use ResponseCache attribute instead of OutputCache, but it's commented out since it was commented in original
-        // [ResponseCache(Duration = 50, Location = ResponseCacheLocation.Server, VaryByQueryKeys = new[] { "*" })]
         public IActionResult Index()
         {
             return View();
