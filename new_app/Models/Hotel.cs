@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace HotelReservationSystem.Models
+namespace new_app.Models
 {
     public class Hotel
     {
@@ -9,7 +9,7 @@ namespace HotelReservationSystem.Models
 
         [Required]
         [MaxLength(255)]
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [ValidateNever]
         public Country? Country { get; set; }
@@ -20,7 +20,7 @@ namespace HotelReservationSystem.Models
 
         [Required]
         [MaxLength(50)]
-        public required string City { get; set; }
+        public string City { get; set; } = string.Empty;
 
         [Required]
         [Range(1, 5)]
