@@ -20,8 +20,8 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $("#hotels").DataTable({
+        document.addEventListener('DOMContentLoaded', () => {
+            const hotelsTable = new DataTable('#hotels', {
                 ajax: {
                     url: "/api/hotels",
                     dataSrc: ""
@@ -37,18 +37,28 @@
                         data: "city"
                     },
                     {
-                        data: "stars"
+                        data: "stars",
+                        render: function(data) {
+                            return '⭐'.repeat(data);
+                        }
                     },
                     {
-                        data: "pricePerNight"
+                        data: "pricePerNight",
+                        render: function(data) {
+                            return new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: 'USD'
+                            }).format(data);
+                        }
                     },
                     {
                         data: "isAllInclusive",
-                        render: function (data) {
+                        render: function(data) {
                             return data ? "Yes" : "No";
                         }
                     }
-                ]
+                ],
+                responsive: true
             });
         });
     </script>
