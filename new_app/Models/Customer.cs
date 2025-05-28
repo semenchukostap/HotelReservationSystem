@@ -7,7 +7,7 @@ namespace HotelReservationSystem.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(255)]
+        [StringLength(255)]
         public required string Name { get; set; }
 
         [DataType(DataType.Date)]
