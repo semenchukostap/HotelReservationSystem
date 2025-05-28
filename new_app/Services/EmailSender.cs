@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+
 namespace HotelReservationSystem.Services
 {
     public interface IEmailSender
