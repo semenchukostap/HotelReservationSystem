@@ -17,9 +17,9 @@
                 <hr />
                 <dl class="row">
                     <dt class="col-sm-4">Name:</dt>
-                    <dd class="col-sm-8">@Model.Customer.Name</dd>
+                    <dd class="col-sm-8">@Model.Customer?.Name</dd>
                     
-                    @if (Model.Customer.Birthdate.HasValue)
+                    @if (Model.Customer?.Birthdate.HasValue == true)
                     {
                         <dt class="col-sm-4">Birthdate:</dt>
                         <dd class="col-sm-8">@Model.Customer.Birthdate?.ToString("yyyy-MM-dd")</dd>
@@ -31,24 +31,24 @@
                 <hr />
                 <dl class="row">
                     <dt class="col-sm-4">Name:</dt>
-                    <dd class="col-sm-8">@Model.Hotel.Name</dd>
+                    <dd class="col-sm-8">@Model.Hotel?.Name</dd>
                     
                     <dt class="col-sm-4">Location:</dt>
-                    <dd class="col-sm-8">@Model.Hotel.City, @Model.Hotel.Country?.Name</dd>
+                    <dd class="col-sm-8">@Model.Hotel?.City, @Model.Hotel?.Country?.Name</dd>
                     
                     <dt class="col-sm-4">Stars:</dt>
                     <dd class="col-sm-8">
-                        @for (int i = 0; i < Model.Hotel.Stars; i++)
+                        @for (int i = 0; i < Model.Hotel?.Stars; i++)
                         {
                             <i class="bi bi-star-fill text-warning"></i>
                         }
                     </dd>
                     
                     <dt class="col-sm-4">Price per night:</dt>
-                    <dd class="col-sm-8">$@Model.Hotel.PricePerNight.ToString("F2")</dd>
+                    <dd class="col-sm-8">$@Model.Hotel?.PricePerNight.ToString("F2")</dd>
                     
                     <dt class="col-sm-4">All Inclusive:</dt>
-                    <dd class="col-sm-8">@(Model.Hotel.IsAllInclusive ? "Yes" : "No")</dd>
+                    <dd class="col-sm-8">@(Model.Hotel?.IsAllInclusive == true ? "Yes" : "No")</dd>
                 </dl>
             </div>
         </div>
