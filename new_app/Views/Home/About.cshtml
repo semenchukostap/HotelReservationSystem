@@ -141,10 +141,10 @@
                         <p class="card-text">Our support team is available 24/7 to assist with any questions or issues.</p>
                         <hr>
                         <div class="d-grid gap-2">
-                            <a href="mailto:support@bookandgo.example.com" class="btn btn-outline-info">
+                            <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-info">
                                 <i class="bi bi-envelope me-2"></i>support@bookandgo.example.com
                             </a>
-                            <button class="btn btn-info text-white">
+                            <button class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#supportModal">
                                 <i class="bi bi-chat-dots me-2"></i>Live Chat Support
                             </button>
                         </div>
