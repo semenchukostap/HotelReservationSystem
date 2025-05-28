@@ -12,12 +12,12 @@ namespace HotelReservationSystem.ViewModels
         /// <summary>
         /// Collection of customers for customer selection dropdown
         /// </summary>
-        public IEnumerable<Customer>? Customers { get; set; }
+        public IEnumerable<Customer> Customers { get; set; } = [];
         
         /// <summary>
         /// Collection of hotels for hotel selection dropdown
         /// </summary>
-        public IEnumerable<Hotel>? Hotels { get; set; }
+        public IEnumerable<Hotel> Hotels { get; set; } = [];
     }
 
     /// <summary>
