@@ -1,0 +1,125 @@
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h3 class="display-4 mb-4">Orders</h3>
+
+<div>
+    <a asp-controller="Orders" asp-action="New" class="btn btn-primary mb-3">New Order</a>
+</div>
+
+<div class="table-responsive">
+    <table id="orders" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Hotel</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Full Price</th>
+                <th>Date Ordered</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#orders").DataTable({
+                ajax: {
+                    url: "/api/NewOrders",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "customer.name"
+                    },
+                    {
+                        data: "hotel.name"
+                    },
+                    {
+                        data: "startDate",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString();
+                        }
+                    },
+                    {
+                        data: "endDate",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString();
+                        }
+                    },
+                    {
+                        data: "fullPrice",
+                        render: function (data) {
+                            return `$${data.toFixed(2)}`;
+                        }
+                    },
+                    {
+                        data: "dateOrdered",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString();
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return `
+                                <div class="d-flex gap-2">
+                                    <a href="/Orders/Details/${data}" class="btn btn-sm btn-info">
+                                        <i class="bi bi-info-circle"></i> Details
+                                    </a>
+                                    <button class="btn btn-sm btn-danger js-delete" data-order-id="${data}">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
+                            `;
+                        },
+                        orderable: false
+                    }
+                ]
+            });
+
+            $("#orders").on("click", ".js-delete", function () {
+                const button = $(this);
+                
+                bootbox.confirm({
+                    title: "Delete Order",
+                    message: "Are you sure you want to delete this order?",
+                    buttons: {
+                        cancel: {
+                            label: '<i class="bi bi-x"></i> Cancel',
+                            className: 'btn-secondary'
+                        },
+                        confirm: {
+                            label: '<i class="bi bi-trash"></i> Delete',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: `/api/NewOrders/${button.attr("data-order-id")}`,
+                                method: "DELETE",
+                                success: function () {
+                                    const table = $("#orders").DataTable();
+                                    const row = button.closest("tr");
+                                    table.row(row).remove().draw();
+                                    
+                                    toastr.success("Order successfully removed.");
+                                },
+                                error: function (xhr) {
+                                    toastr.error("An error occurred while deleting the order.");
+                                    console.error(xhr);
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
