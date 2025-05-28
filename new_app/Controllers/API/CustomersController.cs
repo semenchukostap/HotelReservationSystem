@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HotelReservationSystem.Controllers.API
@@ -37,7 +38,7 @@ namespace HotelReservationSystem.Controllers.API
             if (customer == null)
                 return NotFound();
 
-            return customer;
+            return Ok(customer);
         }
 
         // POST: api/Customers
@@ -70,7 +71,25 @@ namespace HotelReservationSystem.Controllers.API
             customerInDb.Name = customer.Name;
             customerInDb.Birthdate = customer.Birthdate;
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                if (!CustomerExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return StatusCode(500, new { error = "A concurrency conflict occurred.", details = ex.Message });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while updating the customer.", details = ex.Message });
+            }
 
             return NoContent();
         }
@@ -89,6 +108,11 @@ namespace HotelReservationSystem.Controllers.API
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private bool CustomerExists(int id)
+        {
+            return _context.Customers.Any(c => c.Id == id);
         }
     }
 }
