@@ -1,12 +1,16 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HotelReservationSystem.Models
+namespace HotelReservationSystem.Models;
+
+[Table("Countries")]
+public class Country
 {
-    public class Country
-    {
-        public int Id { get; set; }
-        
-        [Required]
-        public required string Name { get; set; } = string.Empty;
-    }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    
+    [Required]
+    [StringLength(100)]
+    public required string Name { get; set; } = string.Empty;
 }
