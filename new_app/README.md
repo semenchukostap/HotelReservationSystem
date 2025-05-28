@@ -1,0 +1,1 @@
+This is the new .NET 8 version of the Hotel Reservation System.
