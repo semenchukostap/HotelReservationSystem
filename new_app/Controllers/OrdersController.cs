@@ -50,7 +50,7 @@ namespace HotelReservationSystem.Controllers
         [Authorize(Roles = RoleName.CanManageHotels)]
         public async Task<IActionResult> New()
         {
-            // In the new version, we'll load the customers and hotels for the typeahead
+            // Load the customers and hotels for the dropdown functionality
             var customers = await _context.Customers.ToListAsync();
             var hotels = await _context.Hotels.ToListAsync();
 
