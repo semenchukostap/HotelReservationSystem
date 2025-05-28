@@ -35,6 +35,9 @@ namespace new_app.Data
 
             // Seed users if none exist
             await SeedUsersAsync(userManager);
+
+            // Seed hotels if none exist
+            await SeedHotelsAsync(context);
         }
 
         /// <summary>
@@ -131,6 +134,66 @@ namespace new_app.Data
                     await userManager.AddToRoleAsync(user, role);
                 }
             }
+        }
+
+        /// <summary>
+        /// Seed initial hotels if they don't exist
+        /// </summary>
+        /// <param name="context">The application database context</param>
+        private static async Task SeedHotelsAsync(ApplicationDbContext context)
+        {
+            // Check if hotels already exist
+            if (context.Hotels.Any())
+            {
+                return; // Hotels already seeded
+            }
+
+            // Get countries to reference in hotels
+            var countries = await context.Countries.ToListAsync();
+            
+            if (!countries.Any())
+            {
+                return; // Cannot seed hotels without countries
+            }
+
+            // Sample hotels to seed
+            var hotels = new List<Hotel>
+            {
+                new Hotel
+                {
+                    Name = "Sea View Resort",
+                    Description = "Luxury beach resort with panoramic ocean views",
+                    CountryId = countries.FirstOrDefault(c => c.Name == "Greece")?.Id ?? countries.First().Id,
+                    City = "Santorini",
+                    Address = "123 Coastal Road",
+                    Rating = 4.8M,
+                    Facilities = "Free WiFi, Pool, Restaurant, Spa"
+                },
+                new Hotel
+                {
+                    Name = "Mountain Lodge",
+                    Description = "Cozy retreat in the mountains with beautiful hiking trails",
+                    CountryId = countries.FirstOrDefault(c => c.Name == "Poland")?.Id ?? countries.First().Id,
+                    City = "Zakopane",
+                    Address = "45 Alpine Street",
+                    Rating = 4.5M,
+                    Facilities = "Free WiFi, Restaurant, Parking, Fireplace"
+                },
+                new Hotel
+                {
+                    Name = "City Center Hotel",
+                    Description = "Modern hotel in the heart of the city",
+                    CountryId = countries.FirstOrDefault(c => c.Name == "Germany")?.Id ?? countries.First().Id,
+                    City = "Berlin",
+                    Address = "78 Main Street",
+                    Rating = 4.2M,
+                    Facilities = "Free WiFi, Restaurant, Business Center, Fitness Center"
+                }
+            };
+
+            // Add hotels to context
+            await context.Hotels.AddRangeAsync(hotels);
+            await context.SaveChangesAsync();
         }
     }
 }
