@@ -18,21 +18,23 @@ namespace HotelReservationSystem.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             _logger.LogInformation(
                 "Index page visited at {VisitTime}", 
                 DateTime.UtcNow);
             
+            await Task.CompletedTask;
             return View();
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
             _logger.LogInformation(
                 "About page visited at {VisitTime}", 
                 DateTime.UtcNow);
             
+            await Task.CompletedTask;
             return View();
         }
 
