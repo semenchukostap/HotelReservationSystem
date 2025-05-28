@@ -1,0 +1,67 @@
+@model HotelReservationSystem.ViewModels.HotelViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@Model.Title</h2>
+
+    <form asp-controller="Hotels" asp-action="Save" method="post">
+        <div class="mb-3">
+            <label asp-for="Hotel.Name" class="form-label"></label>
+            <input asp-for="Hotel.Name" class="form-control" />
+            <span asp-validation-for="Hotel.Name" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Hotel.Stars" class="form-label"></label>
+            <input asp-for="Hotel.Stars" class="form-control" />
+            <span asp-validation-for="Hotel.Stars" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Hotel.CountryId" class="form-label">Country</label>
+            <select asp-for="Hotel.CountryId" class="form-select" 
+                    asp-items="@(new SelectList(Model.Countries, "Id", "Name"))">
+                <option value="">-- Select Country --</option>
+            </select>
+            <span asp-validation-for="Hotel.CountryId" class="text-danger"></span>
+            <div class="mt-2">
+                <a asp-controller="Hotels" asp-action="NewCountryForm" class="btn btn-outline-secondary btn-sm">Add New Country</a>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Hotel.City" class="form-label"></label>
+            <input asp-for="Hotel.City" class="form-control" />
+            <span asp-validation-for="Hotel.City" class="text-danger"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Hotel.PricePerNight" class="form-label"></label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input asp-for="Hotel.PricePerNight" class="form-control" />
+            </div>
+            <span asp-validation-for="Hotel.PricePerNight" class="text-danger"></span>
+        </div>
+        
+        <div class="form-check mb-3">
+            <input asp-for="Hotel.IsAllInclusive" class="form-check-input" />
+            <label asp-for="Hotel.IsAllInclusive" class="form-check-label">All Inclusive</label>
+            <span asp-validation-for="Hotel.IsAllInclusive" class="text-danger"></span>
+        </div>
+        
+        <input type="hidden" asp-for="Hotel.Id" />
+        
+        @Html.AntiForgeryToken()
+        
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-controller="Hotels" asp-action="List" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
