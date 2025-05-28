@@ -26,6 +26,13 @@ public class HomeController : Controller
         return View();
     }
 
+    // Example of how to use ResponseCache instead of OutputCache from .NET Framework
+    // [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByHeader = "User-Agent")]
+    // public IActionResult CachedPage()
+    // {
+    //     return View();
+    // }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
