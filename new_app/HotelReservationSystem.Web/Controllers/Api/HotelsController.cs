@@ -26,7 +26,7 @@ namespace HotelReservationSystem.Web.Controllers.Api
         public async Task<ActionResult<IEnumerable<HotelDto>>> GetHotels()
         {
             var hotels = await _context.Hotels
-                .Include(c => c.Country)
+                .Include(h => h.Country)
                 .ToListAsync();
                 
             return _mapper.Map<List<HotelDto>>(hotels);
@@ -36,7 +36,9 @@ namespace HotelReservationSystem.Web.Controllers.Api
         [HttpGet("{id}")]
         public async Task<ActionResult<HotelDto>> GetHotel(int id)
         {
-            var hotel = await _context.Hotels.SingleOrDefaultAsync(c => c.Id == id);
+            var hotel = await _context.Hotels
+                .Include(h => h.Country)
+                .SingleOrDefaultAsync(h => h.Id == id);
 
             if (hotel == null)
                 return NotFound();
@@ -65,6 +67,9 @@ namespace HotelReservationSystem.Web.Controllers.Api
         [Authorize(Roles = RoleName.CanManageHotels)]
         public async Task<IActionResult> UpdateHotel(int id, HotelDto hotelDto)
         {
+            if (id != hotelDto.Id)
+                return BadRequest();
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -75,7 +80,16 @@ namespace HotelReservationSystem.Web.Controllers.Api
 
             _mapper.Map(hotelDto, hotelInDb);
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await HotelExists(id))
+                    return NotFound();
+                throw;
+            }
 
             return NoContent();
         }
@@ -84,7 +98,7 @@ namespace HotelReservationSystem.Web.Controllers.Api
         [Authorize(Roles = RoleName.CanManageHotels)]
         public async Task<IActionResult> DeleteHotel(int id)
         {
-            var hotel = await _context.Hotels.SingleOrDefaultAsync(c => c.Id == id);
+            var hotel = await _context.Hotels.FindAsync(id);
 
             if (hotel == null)
                 return NotFound();
@@ -93,6 +107,11 @@ namespace HotelReservationSystem.Web.Controllers.Api
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private async Task<bool> HotelExists(int id)
+        {
+            return await _context.Hotels.AnyAsync(h => h.Id == id);
         }
     }
 }
