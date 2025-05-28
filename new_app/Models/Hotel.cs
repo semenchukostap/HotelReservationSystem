@@ -1,15 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace new_app.Models
+namespace HotelReservationSystem.Models
 {
     public class Hotel
     {
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(255)]
-        public string Name { get; set; } = string.Empty;
+        [StringLength(255)]
+        public required string Name { get; set; }
 
         [ValidateNever]
         public Country? Country { get; set; }
@@ -19,8 +19,8 @@ namespace new_app.Models
         public int CountryId { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public string City { get; set; } = string.Empty;
+        [StringLength(50)]
+        public required string City { get; set; }
 
         [Required]
         [Range(1, 5)]
