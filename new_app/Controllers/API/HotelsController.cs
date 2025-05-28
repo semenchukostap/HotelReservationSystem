@@ -23,13 +23,13 @@ namespace HotelReservationSystem.Controllers.API
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IEnumerable<HotelDto>> GetHotels()
+        public async Task<ActionResult<IEnumerable<HotelDto>>> GetHotels()
         {
             var hotels = await _context.Hotels
                 .Include(c => c.Country)
                 .ToListAsync();
                 
-            return _mapper.Map<IEnumerable<HotelDto>>(hotels);
+            return _mapper.Map<List<HotelDto>>(hotels);
         }
 
         [HttpGet("{id}")]
