@@ -7,5 +7,5 @@ public class ApplicationUser : IdentityUser
 {
     [Required]
     [MaxLength(20)]
-    public string Phone { get; set; } = string.Empty;
+    public required string Phone { get; set; }
 }
