@@ -19,22 +19,22 @@ namespace HotelReservationSystem.Models
         public required string Phone { get; set; }
 
         /// <summary>
-        /// Generates a claims identity for the user with custom claims
+        /// Generates a claims identity for the user with custom claims using modern .NET 8 patterns
         /// </summary>
-        /// <param name="manager">The user manager responsible for creating the identity</param>
         /// <returns>A ClaimsIdentity containing user information and claims</returns>
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
+        public ClaimsIdentity GenerateUserIdentity()
         {
-            // Use CreateUserIdentityAsync in .NET 8
-            var userIdentity = new ClaimsIdentity(
-                await manager.GetClaimsAsync(this),
-                IdentityConstants.ApplicationScheme);
+            // Create identity using .NET 8 approach
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, Id),
+                new Claim(ClaimTypes.Name, UserName ?? string.Empty),
+                new Claim(ClaimTypes.Email, Email ?? string.Empty),
+                new Claim("UserPhone", Phone),
+                new Claim("LastAccessed", DateTime.UtcNow.ToString("o"))
+            };
             
-            // Add custom user claims
-            userIdentity.AddClaim(new Claim("UserPhone", Phone));
-            userIdentity.AddClaim(new Claim("LastAccessed", DateTime.UtcNow.ToString("o")));
-            
-            return userIdentity;
+            return new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
         }
     }
 }
