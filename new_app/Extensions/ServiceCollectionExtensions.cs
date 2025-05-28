@@ -21,6 +21,10 @@ namespace HotelReservationSystem.Extensions
         /// <summary>
         /// Configures database context and related services
         /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <param name="configuration">Application configuration</param>
+        /// <returns>The same service collection for chaining</returns>
+        /// <exception cref="InvalidOperationException">Thrown when connection string is not found</exception>
         public static IServiceCollection AddDatabaseServices(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
@@ -42,8 +46,10 @@ namespace HotelReservationSystem.Extensions
         }
 
         /// <summary>
-        /// Configures Identity services with customized options
+        /// Configures Identity services with customized security and user management options
         /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <returns>The same service collection for chaining</returns>
         public static IServiceCollection AddIdentityServices(this IServiceCollection services)
         {
             services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -71,8 +77,11 @@ namespace HotelReservationSystem.Extensions
         }
 
         /// <summary>
-        /// Adds MVC services with customized options for the Hotel Reservation System
+        /// Adds MVC services with customized options for the Hotel Reservation System including
+        /// anti-forgery protection, JSON serialization settings, and Razor pages
         /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <returns>The same service collection for chaining</returns>
         public static IServiceCollection AddMvcServices(this IServiceCollection services)
         {
             services.AddControllersWithViews(options =>
@@ -95,8 +104,11 @@ namespace HotelReservationSystem.Extensions
         }
 
         /// <summary>
-        /// Adds AutoMapper and configures mapping profiles for the application
+        /// Adds AutoMapper and configures mapping profiles for the application to facilitate
+        /// object-to-object mapping throughout the system
         /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <returns>The same service collection for chaining</returns>
         public static IServiceCollection AddAutoMapperServices(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
@@ -105,8 +117,11 @@ namespace HotelReservationSystem.Extensions
         }
 
         /// <summary>
-        /// Configures API behavior options
+        /// Configures API behavior options including model state validation suppression
+        /// to allow for custom handling of validation errors
         /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <returns>The same service collection for chaining</returns>
         public static IServiceCollection AddApiBehaviorServices(this IServiceCollection services)
         {
             services.Configure<ApiBehaviorOptions>(options =>
@@ -118,8 +133,11 @@ namespace HotelReservationSystem.Extensions
         }
 
         /// <summary>
-        /// Adds application specific services
+        /// Adds application specific services including email sending, HttpContext access,
+        /// and AutoMapper services
         /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <returns>The same service collection for chaining</returns>
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IEmailSender, EmailSender>();
@@ -130,6 +148,24 @@ namespace HotelReservationSystem.Extensions
             
             // Register any additional application specific services here
             
+            return services;
+        }
+
+        /// <summary>
+        /// Configures all services for the Hotel Reservation System in one comprehensive method
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <param name="configuration">Application configuration</param>
+        /// <returns>The same service collection for chaining</returns>
+        public static IServiceCollection AddAllServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services
+                .AddDatabaseServices(configuration)
+                .AddIdentityServices()
+                .AddMvcServices()
+                .AddApiBehaviorServices()
+                .AddApplicationServices();
+
             return services;
         }
     }
