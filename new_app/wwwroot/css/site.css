@@ -1,0 +1,26 @@
+/* Base styles for the site */
+body {
+    padding-top: 0;
+    padding-bottom: 20px;
+}
+
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+}
+
+/* Set width on the form input elements */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.input-validation-error {
+    border-color: red;
+}
+
+.field-validation-error {
+    color: red;
+}
