@@ -1,0 +1,45 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+/* Custom styles for the application */
+.field-validation-error {
+  color: #dc3545;
+}
+
+.input-validation-error {
+  border-color: #dc3545;
+}
+
+.validation-summary-errors {
+  color: #dc3545;
+}
+
+/* DataTables customization */
+.dataTables_wrapper .dataTables_length, 
+.dataTables_wrapper .dataTables_filter {
+  margin-bottom: 15px;
+}
+
+/* Bootstrap tweaks */
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.075);
+}
+
+/* Form spacing */
+form .btn {
+  margin-right: 5px;
+}
