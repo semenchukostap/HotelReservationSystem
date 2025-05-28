@@ -1,17 +1,15 @@
 using HotelReservationSystem.Data;
 using HotelReservationSystem.Models;
+using HotelReservationSystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
-using Microsoft.AspNetCore.Localization;
-using System.Text.Json.Serialization;
-using HotelReservationSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 // Configure EF Core
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -41,7 +39,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // Add External Authentication providers if needed
-// Uncomment and configure as needed
+// Uncomment and configure as needed with values from appsettings.json
 /*
 builder.Services.AddAuthentication()
     .AddFacebook(options => {
@@ -51,11 +49,19 @@ builder.Services.AddAuthentication()
     .AddGoogle(options => {
         options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
         options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    })
+    .AddMicrosoftAccount(options => {
+        options.ClientId = builder.Configuration["Authentication:MicrosoftAccount:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:MicrosoftAccount:ClientSecret"];
+    })
+    .AddTwitter(options => {
+        options.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerKey"];
+        options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"];
     });
 */
 
 // Add AutoMapper
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Configure JSON options for API controllers
 builder.Services.AddControllers()
@@ -85,6 +91,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios.
     app.UseHsts();
 }
 
@@ -102,7 +109,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-// Initialize database with admin user if needed
+// Seed the database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -111,7 +118,12 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        await DbInitializer.InitializeAsync(context, userManager, roleManager);
+        
+        // Ensure database is created
+        context.Database.EnsureCreated();
+        
+        // Seed data if needed
+        // await DbInitializer.InitializeAsync(context, userManager, roleManager);
     }
     catch (Exception ex)
     {
