@@ -7,6 +7,14 @@ using Microsoft.Extensions.Logging;
 using HotelReservationSystem.Models;
 using HotelReservationSystem.ViewModels;
 
+/*
+ * This controller handles user authentication functionality using ASP.NET Core Identity.
+ * It was migrated from the previous OWIN-based authentication system to the newer ASP.NET Core Identity framework.
+ * The migration provides better integration with dependency injection, improved security features, and more 
+ * consistent authentication across the application. Core Identity offers enhanced password policies, 
+ * two-factor authentication support, and external login providers with a more modern implementation.
+ */
+
 namespace HotelReservationSystem.Controllers
 {
     [Authorize]
