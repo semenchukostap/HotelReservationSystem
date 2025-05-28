@@ -8,16 +8,18 @@ namespace HotelReservationSystem.Mapping
     {
         public MappingProfile()
         {
-            // Domain to DTO
+            // Domain to DTO mappings
             CreateMap<Hotel, HotelDto>()
                 .ForMember(dto => dto.CountryName, opt => opt.MapFrom(h => h.Country != null ? h.Country.Name : string.Empty));
-                
+
             CreateMap<Country, CountryDto>();
-            
-            // DTO to Domain
+
+            // DTO to Domain mappings
             CreateMap<HotelDto, Hotel>();
             CreateMap<CountryDto, Country>();
             CreateMap<NewOrderDto, Order>();
+            
+            // Add any additional mappings here
         }
     }
 }
