@@ -1,0 +1,70 @@
+html {
+  font-size: 14px;
+  position: relative;
+  min-height: 100%;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+/* Footer positioning */
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+/* Form validation styles */
+.field-validation-error,
+label.error {
+  color: #dc3545;
+}
+
+.input-validation-error,
+input.error {
+  border-color: #dc3545;
+}
+
+.validation-summary-errors {
+  color: #dc3545;
+}
+
+/* Table styles */
+.table > tbody > tr.active > td {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Card styles */
+.card {
+  margin-bottom: 1rem;
+}
+
+/* Spacing utilities */
+.mt-lg {
+  margin-top: 2rem;
+}
+
+.mb-lg {
+  margin-bottom: 2rem;
+}
+
+/* Jumbotron (for Bootstrap 5 compatibility) */
+.jumbotron {
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  background-color: #e9ecef;
+  border-radius: .3rem;
+}
