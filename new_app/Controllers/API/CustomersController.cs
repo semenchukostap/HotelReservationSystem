@@ -1,35 +1,39 @@
-using AutoMapper;
-using HotelReservationSystem.Models;
-using HotelReservationSystem.Services;
-using HotelReservationSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using new_app.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace HotelReservationSystem.Controllers.API
+namespace new_app.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly ICustomerService _customerService;
-        private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
 
-        public CustomersController(ICustomerService customerService, IMapper mapper)
+        public CustomersController(ApplicationDbContext context)
         {
-            _customerService = customerService;
-            _mapper = mapper;
+            _context = context;
         }
 
+        // GET: api/Customers
         [HttpGet]
+        [Authorize(Roles = RoleName.CanManageHotels)]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
         {
-            var customers = await _customerService.GetAllCustomersAsync();
-            return Ok(customers);
+            return await _context.Customers.ToListAsync();
         }
 
+        // GET: api/Customers/5
         [HttpGet("{id}")]
+        [Authorize(Roles = RoleName.CanManageHotels)]
         public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            var customer = await _customerService.GetCustomerByIdAsync(id);
+            var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
 
             if (customer == null)
                 return NotFound();
@@ -37,49 +41,56 @@ namespace HotelReservationSystem.Controllers.API
             return Ok(customer);
         }
 
+        // POST: api/Customers
         [HttpPost]
-        public async Task<ActionResult<Customer>> CreateCustomer(CustomerViewModel viewModel)
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<ActionResult<Customer>> CreateCustomer(Customer customer)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var customer = _mapper.Map<Customer>(viewModel);
-            
-            var id = await _customerService.CreateCustomerAsync(customer);
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
         }
 
+        // PUT: api/Customers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomer(int id, CustomerViewModel viewModel)
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<IActionResult> UpdateCustomer(int id, Customer customer)
         {
-            if (id != viewModel.Id)
-                return BadRequest();
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-                
-            var customer = await _customerService.GetCustomerByIdAsync(id);
-            
-            if (customer == null)
+
+            if (id != customer.Id)
+                return BadRequest();
+
+            var customerInDb = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
+
+            if (customerInDb == null)
                 return NotFound();
-                
-            _mapper.Map(viewModel, customer);
-                
-            await _customerService.UpdateCustomerAsync(customer);
+
+            customerInDb.Name = customer.Name;
+            customerInDb.Birthdate = customer.Birthdate;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
+        // DELETE: api/Customers/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = RoleName.CanManageHotels)]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
-            var customer = await _customerService.GetCustomerByIdAsync(id);
-            
+            var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
+
             if (customer == null)
                 return NotFound();
-                
-            await _customerService.DeleteCustomerAsync(id);
+
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
