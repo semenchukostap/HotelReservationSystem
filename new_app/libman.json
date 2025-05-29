@@ -1,0 +1,113 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "bootstrap@5.3.2",
+      "destination": "wwwroot/lib/bootstrap",
+      "files": [
+        "css/bootstrap.min.css",
+        "css/bootstrap.css",
+        "js/bootstrap.bundle.min.js",
+        "js/bootstrap.bundle.js"
+      ]
+    },
+    {
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/lib/jquery",
+      "files": [
+        "jquery.min.js",
+        "jquery.js"
+      ]
+    },
+    {
+      "library": "jquery-validate@1.19.5",
+      "destination": "wwwroot/lib/jquery-validation",
+      "files": [
+        "jquery.validate.min.js",
+        "jquery.validate.js",
+        "additional-methods.min.js",
+        "additional-methods.js"
+      ]
+    },
+    {
+      "library": "jquery-validation-unobtrusive@4.0.0",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive",
+      "files": [
+        "jquery.validate.unobtrusive.min.js",
+        "jquery.validate.unobtrusive.js"
+      ]
+    },
+    {
+      "library": "bootbox.js@6.0.0",
+      "destination": "wwwroot/lib/bootbox",
+      "files": [
+        "bootbox.min.js",
+        "bootbox.js"
+      ]
+    },
+    {
+      "library": "datatables@1.10.21",
+      "destination": "wwwroot/lib/datatables",
+      "files": [
+        "js/jquery.dataTables.min.js",
+        "js/jquery.dataTables.js",
+        "css/jquery.dataTables.min.css",
+        "css/jquery.dataTables.css"
+      ]
+    },
+    {
+      "library": "datatables-bootstrap@1.10.21",
+      "destination": "wwwroot/lib/datatables-bootstrap",
+      "files": [
+        "js/dataTables.bootstrap.min.js",
+        "js/dataTables.bootstrap.js",
+        "css/dataTables.bootstrap.min.css",
+        "css/dataTables.bootstrap.css"
+      ]
+    },
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr",
+      "files": [
+        "toastr.min.js",
+        "toastr.js",
+        "toastr.min.css",
+        "toastr.css"
+      ]
+    },
+    {
+      "library": "typeahead.js@0.11.1",
+      "destination": "wwwroot/lib/typeahead",
+      "files": [
+        "typeahead.bundle.min.js",
+        "typeahead.bundle.js"
+      ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "typeahead.js-bootstrap-css@1.2.1",
+      "destination": "wwwroot/lib/typeahead-bootstrap-css",
+      "files": [
+        "typeaheadjs.min.css",
+        "typeaheadjs.css"
+      ]
+    },
+    {
+      "library": "modernizr@2.8.3",
+      "destination": "wwwroot/lib/modernizr",
+      "files": [
+        "modernizr.min.js",
+        "modernizr.js"
+      ]
+    },
+    {
+      "library": "respond.js@1.4.2",
+      "destination": "wwwroot/lib/respond",
+      "files": [
+        "respond.min.js",
+        "respond.js"
+      ]
+    }
+  ]
+}
