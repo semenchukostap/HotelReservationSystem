@@ -21,14 +21,14 @@ namespace new_app.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            if (User.IsInRole(RoleName.CanManageHotels))
+            if (User.IsInRole(RoleName.Admin))
                 return RedirectToAction("List");
 
             return RedirectToAction("ReadOnlyList");
         }
 
         // GET: Hotels/List
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> List()
         {
             var hotels = await _context.Hotels.Include(h => h.Country).ToListAsync();
@@ -44,7 +44,7 @@ namespace new_app.Controllers
         }
 
         // GET: Hotels/Form
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> Form(int? id)
         {
             var viewModel = new HotelViewModel
@@ -68,7 +68,7 @@ namespace new_app.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> New()
         {
             var countries = await _context.Countries.ToListAsync();
@@ -82,7 +82,7 @@ namespace new_app.Controllers
             return View("Form", viewModel);
         }
 
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> Edit(int id)
         {
             var hotel = await _context.Hotels.SingleOrDefaultAsync(h => h.Id == id);
@@ -101,7 +101,7 @@ namespace new_app.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> Save(Hotel hotel)
         {
             if (!ModelState.IsValid)
@@ -137,7 +137,7 @@ namespace new_app.Controllers
             return RedirectToAction("List");
         }
 
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public IActionResult NewCountry()
         {
             var country = new Country();
@@ -145,7 +145,7 @@ namespace new_app.Controllers
             return View("NewCountryForm", country);
         }
 
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public IActionResult NewCountryForm()
         {
             return View();
@@ -153,7 +153,7 @@ namespace new_app.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> SaveCountry(Country country)
         {
             if (!ModelState.IsValid)
