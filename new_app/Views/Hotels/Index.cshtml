@@ -1,0 +1,134 @@
+@model IEnumerable<HotelReservationSystem.Models.Hotel>
+
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Hotels</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table id="hotels" class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Address)</th>
+                    <th>@Html.DisplayNameFor(model => model.Country.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Stars)</th>
+                    <th>@Html.DisplayNameFor(model => model.PricePerNight)</th>
+                    <th>@Html.DisplayNameFor(model => model.IsAllInclusive)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Country.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Stars)</td>
+                    <td>@Html.DisplayFor(modelItem => item.PricePerNight)</td>
+                    <td>@(item.IsAllInclusive ? "Yes" : "No")</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Details">
+                                <i class="bi bi-info-circle"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger js-delete" data-hotel-id="@item.Id" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+}
+
+@section Scripts {
+    <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const table = $('#hotels').DataTable({
+                language: {
+                    search: "Search hotels:",
+                    lengthMenu: "Show _MENU_ hotels per page",
+                },
+                responsive: true,
+                order: [[0, "asc"]]
+            });
+
+            // Handle delete functionality
+            $("#hotels").on('click', '.js-delete', function () {
+                const button = $(this);
+                const hotelId = button.data("hotel-id");
+                
+                if (confirm("Are you sure you want to delete this hotel?")) {
+                    $.ajax({
+                        url: `/api/hotels/${hotelId}`,
+                        method: "DELETE",
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function () {
+                            table.row(button.closest('tr')).remove().draw();
+                            // Show success notification using built-in ASP.NET Core toast notification
+                            ShowToast('Success', 'Hotel successfully deleted.');
+                        },
+                        error: function (xhr) {
+                            ShowToast('Error', 'Failed to delete hotel. Please try again.');
+                        }
+                    });
+                }
+            });
+        });
+
+        function ShowToast(title, message) {
+            const toastContainer = document.getElementById('toast-container') 
+                               || createToastContainer();
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${title.toLowerCase() === 'error' ? 'bg-danger' : 'bg-success'} text-white`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <strong class="me-auto">${title}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">${message}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', () => toast.remove());
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            document.body.appendChild(container);
+            return container;
+        }
+    </script>
+}
