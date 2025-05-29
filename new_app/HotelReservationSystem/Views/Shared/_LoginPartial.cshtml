@@ -2,25 +2,28 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="nav navbar-nav navbar-right">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li>
-        <a id="manage-account" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
-    </li>
-    <li>
-        <a href="javascript:document.getElementById('logoutForm').submit()" id="logout-button">Logout</a>
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" style="display:none;">
-        </form>
-    </li>
+    <form id="logoutForm" class="navbar-right" asp-controller="Account" asp-action="LogOut" method="post">
+        @Html.AntiForgeryToken()
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a id="manage" asp-controller="Manage" asp-action="Index" title="Manage">Hello @User.Identity.Name!</a>
+            </li>
+            <li>
+                <a href="javascript:document.getElementById('logoutForm').submit()" id="logoutLink">Logout</a>
+            </li>
+        </ul>
+    </form>
 }
 else
 {
-    <li>
-        <a id="register-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li>
-        <a id="login-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            <a id="registerLink" asp-controller="Account" asp-action="Register">Register</a>
+        </li>
+        <li>
+            <a id="loginLink" asp-controller="Account" asp-action="Login">Login</a>
+        </li>
+    </ul>
 }
-</ul>
