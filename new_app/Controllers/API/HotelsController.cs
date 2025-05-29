@@ -1,12 +1,15 @@
 using AutoMapper;
+using HotelReservationSystem.Data;
+using HotelReservationSystem.DTOs;
+using HotelReservationSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using new_app.Data;
-using new_app.DTOs;
-using new_app.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace new_app.Controllers.API
+namespace HotelReservationSystem.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -14,13 +17,11 @@ namespace new_app.Controllers.API
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly ILogger<HotelsController> _logger;
 
-        public HotelsController(ApplicationDbContext context, IMapper mapper, ILogger<HotelsController> logger)
+        public HotelsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _logger = logger;
         }
 
         // GET: api/Hotels
@@ -31,7 +32,7 @@ namespace new_app.Controllers.API
             var hotels = await _context.Hotels
                 .Include(c => c.Country)
                 .ToListAsync();
-
+            
             return Ok(_mapper.Map<IEnumerable<HotelDto>>(hotels));
         }
 
@@ -76,13 +77,12 @@ namespace new_app.Controllers.API
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var hotelInDb = await _context.Hotels.FindAsync(id);
+            var hotelInDb = await _context.Hotels.SingleOrDefaultAsync(c => c.Id == id);
 
             if (hotelInDb == null)
                 return NotFound();
 
             _mapper.Map(hotelDto, hotelInDb);
-
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -93,8 +93,8 @@ namespace new_app.Controllers.API
         [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> DeleteHotel(int id)
         {
-            var hotel = await _context.Hotels.FindAsync(id);
-            
+            var hotel = await _context.Hotels.SingleOrDefaultAsync(c => c.Id == id);
+
             if (hotel == null)
                 return NotFound();
 
