@@ -6,6 +6,7 @@ using HotelReservationSystem.Services;
 using HotelReservationSystem.Helpers;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using HotelReservationSystem.Middleware;
 
 namespace HotelReservationSystem;
 
@@ -86,10 +87,15 @@ public class Program
         }
         else
         {
+            // Production error handling
             app.UseExceptionHandler("/Home/Error");
+            
             // The default HSTS value is 30 days. You may want to change this for production scenarios.
             app.UseHsts();
         }
+
+        // Custom global exception handling middleware
+        app.UseMiddleware<ErrorHandlingMiddleware>();
 
         app.UseHttpsRedirection();
 
