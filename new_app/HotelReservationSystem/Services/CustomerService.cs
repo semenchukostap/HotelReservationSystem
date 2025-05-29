@@ -12,7 +12,7 @@ using AutoMapper.QueryableExtensions;
 namespace HotelReservationSystem.Services
 {
     /// <summary>
-    /// Implementation of ICustomerService interface that handles customer-related business logic
+    /// Implementation of ICustomerService interface that handles customer-related business logic for .NET 8
     /// </summary>
     public class CustomerService : ICustomerService
     {
@@ -42,7 +42,7 @@ namespace HotelReservationSystem.Services
         /// </summary>
         /// <param name="id">The customer ID</param>
         /// <returns>A CustomerDto object if found, null otherwise</returns>
-        public async Task<CustomerDto> GetByIdAsync(int id)
+        public async Task<CustomerDto?> GetByIdAsync(int id)
         {
             var customer = await _context.Customers
                 .AsNoTracking()
