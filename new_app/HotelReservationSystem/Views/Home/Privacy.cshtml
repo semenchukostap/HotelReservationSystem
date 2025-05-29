@@ -1,0 +1,101 @@
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h1>@ViewData["Title"]</h1>
+        </div>
+        <div class="card-body">
+            <p class="lead">Our commitment to your privacy</p>
+            
+            <div class="mt-4">
+                <h4>Information We Collect</h4>
+                <p>
+                    The Hotel Reservation System collects personal information necessary to facilitate 
+                    hotel reservations and provide customer service. This information may include:
+                </p>
+                <ul class="list-group mb-4">
+                    <li class="list-group-item">Name and contact information</li>
+                    <li class="list-group-item">Reservation details and preferences</li>
+                    <li class="list-group-item">Payment information</li>
+                    <li class="list-group-item">Correspondence history</li>
+                </ul>
+                
+                <h4>How We Use Your Information</h4>
+                <div class="alert alert-info">
+                    <p>Your information is used exclusively for:</p>
+                    <ul>
+                        <li>Processing reservations</li>
+                        <li>Customer service</li>
+                        <li>Legal compliance</li>
+                        <li>System improvements</li>
+                    </ul>
+                </div>
+                
+                <h4>Data Protection</h4>
+                <p>
+                    We implement appropriate security measures to protect your personal information.
+                    All data is encrypted and access is restricted to authorized personnel only.
+                </p>
+                
+                <div class="alert alert-warning">
+                    <h5>Third-Party Sharing</h5>
+                    <p>
+                        We may share your information with hotels to fulfill your reservation. 
+                        We do not sell or rent your personal information to third parties for 
+                        marketing purposes.
+                    </p>
+                </div>
+                
+                <h4>Your Rights</h4>
+                <p>You have the right to:</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Access</h5>
+                                <p class="card-text">Request a copy of your personal data</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Correction</h5>
+                                <p class="card-text">Update or correct inaccurate information</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Deletion</h5>
+                                <p class="card-text">Request removal of your personal data</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Objection</h5>
+                                <p class="card-text">Object to processing of your personal data</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h4>Contact Us</h4>
+                <p>
+                    If you have questions about our privacy policy, please contact our privacy team at 
+                    <a href="mailto:privacy@hotelreservationsystem.com">privacy@hotelreservationsystem.com</a>.
+                </p>
+                
+                <div class="mt-4 text-muted">
+                    <p>Last updated: @DateTime.Now.ToString("MMMM yyyy")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
