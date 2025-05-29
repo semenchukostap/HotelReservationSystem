@@ -101,28 +101,30 @@ public class Program
 
         // Configure Static Files Middleware
         // This middleware enables serving static files like CSS, JavaScript, images, etc.
-        // It must be called before other middleware that might use static files (like UseRouting)
-        // The default directory is 'wwwroot', but additional directories can be specified
-        app.UseStaticFiles(); 
+        // Default directory for static files is 'wwwroot'
+        app.UseStaticFiles();
         
-        // Optional: Configure additional static file directories if needed
-        // This allows serving Bootstrap CSS and other library files from external paths
-        /* 
+        // Configure additional static file directories for DataTables and other client-side libraries
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(
-                Path.Combine(builder.Environment.ContentRootPath, "node_modules")),
+                Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "lib")),
             RequestPath = "/lib"
         });
-        */
 
-        // Optional: Configure default document serving behavior
-        /* 
+        // Configure additional directory for DataTables specific files
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+                Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "lib", "datatables")),
+            RequestPath = "/lib/datatables"
+        });
+
+        // Configure default document serving behavior
         app.UseDefaultFiles(new DefaultFilesOptions
         {
             DefaultFileNames = new List<string> { "index.html", "default.html" }
         });
-        */
 
         app.UseRouting();
 
