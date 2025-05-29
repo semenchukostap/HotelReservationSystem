@@ -24,15 +24,23 @@
       ]
     },
     {
-      "library": "datatables@1.13.6",
+      "library": "datatables@1.10.21",
       "destination": "wwwroot/lib/datatables/",
       "files": [
         "js/jquery.dataTables.min.js",
-        "js/dataTables.bootstrap5.min.js",
-        "css/dataTables.bootstrap5.min.css",
         "js/jquery.dataTables.js",
-        "js/dataTables.bootstrap5.js",
-        "css/dataTables.bootstrap5.css"
+        "css/jquery.dataTables.min.css",
+        "css/jquery.dataTables.css"
+      ]
+    },
+    {
+      "library": "datatables.net-bs5@1.10.21",
+      "destination": "wwwroot/lib/datatables-bs5/",
+      "files": [
+        "dataTables.bootstrap5.min.js",
+        "dataTables.bootstrap5.js",
+        "dataTables.bootstrap5.min.css",
+        "dataTables.bootstrap5.css"
       ]
     },
     {
