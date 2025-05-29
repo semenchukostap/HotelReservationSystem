@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (User.IsInRole("CanManageHotels"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </p>
+}
+
+<div class="table-responsive">
+    <table id="hotels" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Country</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- DataTables will populate this -->
+        </tbody>
+    </table>
+</div>
+
+@section scripts
+{
+    <partial name="_DataTablesScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            // Initialize Hotels DataTable
+            const table = initHotelsDataTable("#hotels");
+            
+            // Initialize delete handler
+            handleDataTableDelete(table, "/api/hotels");
+        });
+    </script>
+}
