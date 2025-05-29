@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelReservationSystem.Data
 {
+    /// <summary>
+    /// Static class to handle database seeding operations
+    /// </summary>
     public static class DbSeeder
     {
+        /// <summary>
+        /// Seeds roles, admin user, and initial data to the database
+        /// </summary>
+        /// <param name="serviceProvider">The application's service provider</param>
         public static async Task SeedRolesAndAdminUser(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
@@ -41,14 +48,13 @@ namespace HotelReservationSystem.Data
                 }
             }
 
-            await SeedInitialData(context);
-        }
-
-        private static async Task SeedInitialData(ApplicationDbContext context)
-        {
             await SeedCountries(context);
         }
 
+        /// <summary>
+        /// Seeds the countries data if no countries exist
+        /// </summary>
+        /// <param name="context">The application database context</param>
         private static async Task SeedCountries(ApplicationDbContext context)
         {
             // Seed countries if none exist
@@ -56,19 +62,19 @@ namespace HotelReservationSystem.Data
             {
                 var countries = new List<Country>
                 {
-                    new Country { Name = "United States" },
-                    new Country { Name = "Canada" },
-                    new Country { Name = "United Kingdom" },
-                    new Country { Name = "France" },
+                    new Country { Name = "Egypt" },
+                    new Country { Name = "Poland" },
                     new Country { Name = "Germany" },
-                    new Country { Name = "Japan" },
-                    new Country { Name = "Australia" },
-                    new Country { Name = "Italy" },
                     new Country { Name = "Spain" },
-                    new Country { Name = "Mexico" }
+                    new Country { Name = "Greece" },
+                    new Country { Name = "Turkey" },
+                    new Country { Name = "Malta" },
+                    new Country { Name = "France" },
+                    new Country { Name = "Portugal" }, // Corrected from "Portual" in original
+                    new Country { Name = "England" }
                 };
 
-                await context.Countries.AddRangeAsync(countries);
+                context.Countries.AddRange(countries);
                 await context.SaveChangesAsync();
             }
         }
