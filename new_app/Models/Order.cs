@@ -8,10 +8,10 @@ namespace HotelReservationSystem.Models
         public int Id { get; set; }
 
         [Required]
-        public required Customer Customer { get; set; }
+        public Customer? Customer { get; set; }
         
         [Required]
-        public required Hotel Hotel { get; set; }
+        public Hotel? Hotel { get; set; }
 
         [Required]
         public DateTime DateOrdered { get; set; }
