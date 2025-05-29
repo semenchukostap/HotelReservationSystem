@@ -4,9 +4,12 @@ using AutoMapper;
 using HotelReservationSystem.Models;
 using HotelReservationSystem.Services;
 using HotelReservationSystem.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelReservationSystem.Controllers;
 
+[ApiController]
+[Route("[controller]")]
 public class HotelsController : Controller
 {
     private readonly IHotelService _hotelService;
@@ -23,28 +26,37 @@ public class HotelsController : Controller
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
         try
         {
+            _logger.LogInformation("Accessing hotels index page");
+            
             if (User.IsInRole(RoleName.CanManageHotels))
+            {
+                _logger.LogDebug("User has management privileges, showing full list view");
                 return View("List");
+            }
 
+            _logger.LogDebug("User has read-only privileges, showing limited list view");
             return View("ReadOnlyList");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while processing Index action");
-            return StatusCode(500, "An error occurred while processing your request.");
+            _logger.LogError(ex, "Unhandled exception occurred while accessing index page");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 
+    [HttpGet("new")]
     [Authorize(Roles = RoleName.CanManageHotels)]
     public async Task<IActionResult> New()
     {
         try
         {
+            _logger.LogInformation("Creating new hotel form");
             var countries = await _hotelService.GetCountriesAsync();
             var viewModel = new HotelViewModel
             {
@@ -56,19 +68,25 @@ public class HotelsController : Controller
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while processing New action");
-            return StatusCode(500, "An error occurred while processing your request.");
+            _logger.LogError(ex, "Error occurred while preparing new hotel form");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 
+    [HttpGet("edit/{id}")]
     [Authorize(Roles = RoleName.CanManageHotels)]
     public async Task<IActionResult> Edit(int id)
     {
         try
         {
+            _logger.LogInformation("Editing hotel with ID: {HotelId}", id);
+            
             var hotel = await _hotelService.GetByIdAsync(id);
             if (hotel == null)
-                return NotFound();
+            {
+                _logger.LogWarning("Hotel with ID {HotelId} not found", id);
+                return NotFound($"Hotel with ID {id} was not found.");
+            }
 
             var viewModel = new HotelViewModel
             {
@@ -80,20 +98,21 @@ public class HotelsController : Controller
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while processing Edit action for hotel {HotelId}", id);
-            return StatusCode(500, "An error occurred while processing your request.");
+            _logger.LogError(ex, "Error occurred while editing hotel {HotelId}", id);
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 
-    [HttpPost]
+    [HttpPost("save")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = RoleName.CanManageHotels)]
-    public async Task<IActionResult> Save(Hotel hotel)
+    public async Task<IActionResult> Save([FromForm] Hotel hotel)
     {
         try
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Invalid model state when saving hotel");
                 var viewModel = new HotelViewModel
                 {
                     Hotel = hotel,
@@ -103,54 +122,81 @@ public class HotelsController : Controller
             }
 
             if (hotel.Id == 0)
+            {
+                _logger.LogInformation("Creating new hotel: {HotelName}", hotel.Name);
                 await _hotelService.CreateAsync(hotel);
+            }
             else
+            {
+                _logger.LogInformation("Updating existing hotel: {HotelId}", hotel.Id);
                 await _hotelService.UpdateAsync(hotel);
+            }
 
             return RedirectToAction(nameof(Index));
+        }
+        catch (DbUpdateException dbEx)
+        {
+            _logger.LogError(dbEx, "Database error occurred while saving hotel {HotelId}", hotel.Id);
+            return StatusCode(500, "A database error occurred while saving the hotel.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while saving hotel {HotelId}", hotel.Id);
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 
+    [HttpGet("country/new")]
     [Authorize(Roles = RoleName.CanManageHotels)]
     public IActionResult NewCountry()
     {
         try
         {
+            _logger.LogInformation("Accessing new country form");
             return View("NewCountryForm", new Country());
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while processing NewCountry action");
-            return StatusCode(500, "An error occurred while processing your request.");
+            _logger.LogError(ex, "Error occurred while accessing new country form");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 
-    [HttpPost]
+    [HttpPost("country/save")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = RoleName.CanManageHotels)]
-    public async Task<IActionResult> SaveCountry(Country country)
+    public async Task<IActionResult> SaveCountry([FromForm] Country country)
     {
         try
         {
             if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Invalid model state when saving country");
                 return View("NewCountryForm", country);
+            }
 
             if (country.Id == 0)
+            {
+                _logger.LogInformation("Creating new country: {CountryName}", country.Name);
                 await _hotelService.CreateCountryAsync(country);
+            }
             else
+            {
+                _logger.LogInformation("Updating existing country: {CountryId}", country.Id);
                 await _hotelService.UpdateCountryAsync(country);
+            }
 
             return RedirectToAction(nameof(New));
+        }
+        catch (DbUpdateException dbEx)
+        {
+            _logger.LogError(dbEx, "Database error occurred while saving country {CountryId}", country.Id);
+            return StatusCode(500, "A database error occurred while saving the country.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while saving country {CountryId}", country.Id);
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 }
