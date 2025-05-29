@@ -16,7 +16,7 @@ namespace HotelReservationSystem.Models
         [MaxLength(20)]
         [Phone]
         [Display(Name = "Phone Number")]
-        public string Phone { get; set; }
+        public string Phone { get; set; } = string.Empty;
 
         /// <summary>
         /// The user's first name.
@@ -24,7 +24,7 @@ namespace HotelReservationSystem.Models
         [Required]
         [MaxLength(50)]
         [Display(Name = "First Name")]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
         /// <summary>
         /// The user's last name.
@@ -32,25 +32,25 @@ namespace HotelReservationSystem.Models
         [Required]
         [MaxLength(50)]
         [Display(Name = "Last Name")]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         /// <summary>
         /// The user's address.
         /// </summary>
         [MaxLength(100)]
-        public string Address { get; set; }
+        public string Address { get; set; } = string.Empty;
 
         /// <summary>
         /// The user's city.
         /// </summary>
         [MaxLength(50)]
-        public string City { get; set; }
+        public string City { get; set; } = string.Empty;
 
         /// <summary>
         /// The user's country.
         /// </summary>
         [MaxLength(50)]
-        public string Country { get; set; }
+        public string Country { get; set; } = string.Empty;
 
         /// <summary>
         /// The date when the user was registered.
