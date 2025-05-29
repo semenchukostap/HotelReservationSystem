@@ -37,7 +37,9 @@ public class HotelsController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<HotelDto>> GetHotel(int id)
     {
-        var hotel = await _context.Hotels.SingleOrDefaultAsync(c => c.Id == id);
+        var hotel = await _context.Hotels
+            .Include(c => c.Country)
+            .SingleOrDefaultAsync(c => c.Id == id);
 
         if (hotel == null)
             return NotFound();
@@ -64,8 +66,11 @@ public class HotelsController : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize(Roles = RoleNames.CanManageHotels)]
-    public async Task<IActionResult> UpdateHotel(int id, HotelDto hotelDto)
+    public async Task<ActionResult> UpdateHotel(int id, HotelDto hotelDto)
     {
+        if (id != hotelDto.Id)
+            return BadRequest("ID mismatch between route and model data");
+            
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -83,7 +88,7 @@ public class HotelsController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = RoleNames.CanManageHotels)]
-    public async Task<IActionResult> DeleteHotel(int id)
+    public async Task<ActionResult> DeleteHotel(int id)
     {
         var hotel = await _context.Hotels.SingleOrDefaultAsync(c => c.Id == id);
 
