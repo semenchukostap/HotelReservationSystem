@@ -1,0 +1,21 @@
+@using Microsoft.AspNetCore.Identity
+@model IEnumerable<AuthenticationScheme>
+
+@if (Model.Any())
+{
+    <div class="mt-4">
+        <h4>Use another service to log in.</h4>
+        <hr />
+        <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+            <div class="d-grid gap-2">
+                @foreach (var provider in Model)
+                {
+                    <button type="submit" class="btn btn-primary mb-2" name="provider" value="@provider.Name">
+                        <i class="bi bi-@(provider.Name.ToLower())" aria-hidden="true"></i>
+                        Sign in with @provider.DisplayName
+                    </button>
+                }
+            </div>
+        </form>
+    </div>
+}
