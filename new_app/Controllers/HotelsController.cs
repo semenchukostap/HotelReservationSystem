@@ -22,15 +22,56 @@ namespace new_app.Controllers
         public IActionResult Index()
         {
             if (User.IsInRole(RoleName.CanManageHotels))
-                return View("List");
+                return RedirectToAction("List");
 
-            return View("ReadOnlyList");
+            return RedirectToAction("ReadOnlyList");
+        }
+
+        // GET: Hotels/List
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<IActionResult> List()
+        {
+            var hotels = await _context.Hotels.Include(h => h.Country).ToListAsync();
+            return View(hotels);
+        }
+
+        // GET: Hotels/ReadOnlyList
+        [AllowAnonymous]
+        public async Task<IActionResult> ReadOnlyList()
+        {
+            var hotels = await _context.Hotels.Include(h => h.Country).ToListAsync();
+            return View(hotels);
+        }
+
+        // GET: Hotels/Form
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<IActionResult> Form(int? id)
+        {
+            var viewModel = new HotelViewModel
+            {
+                Countries = await _context.Countries.ToListAsync()
+            };
+
+            if (id == null)
+            {
+                viewModel.Hotel = new Hotel();
+                return View(viewModel);
+            }
+            
+            var hotel = await _context.Hotels.SingleOrDefaultAsync(h => h.Id == id);
+            
+            if (hotel == null)
+                return NotFound();
+            
+            viewModel.Hotel = hotel;
+            
+            return View(viewModel);
         }
 
         [Authorize(Roles = RoleName.CanManageHotels)]
-        public IActionResult New()
+        public async Task<IActionResult> New()
         {
-            var countries = _context.Countries.ToList();
+            var countries = await _context.Countries.ToListAsync();
 
             var viewModel = new HotelViewModel()
             {
@@ -78,7 +119,11 @@ namespace new_app.Controllers
                 _context.Hotels.Add(hotel);
             else
             {
-                var hotelInDb = await _context.Hotels.SingleAsync(c => c.Id == hotel.Id);
+                var hotelInDb = await _context.Hotels.SingleOrDefaultAsync(c => c.Id == hotel.Id);
+                
+                if (hotelInDb == null)
+                    return NotFound();
+                    
                 hotelInDb.Name = hotel.Name;
                 hotelInDb.City = hotel.City;
                 hotelInDb.CountryId = hotel.CountryId;
@@ -89,14 +134,21 @@ namespace new_app.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Hotels");
+            return RedirectToAction("List");
         }
 
+        [Authorize(Roles = RoleName.CanManageHotels)]
         public IActionResult NewCountry()
         {
             var country = new Country();
 
             return View("NewCountryForm", country);
+        }
+
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public IActionResult NewCountryForm()
+        {
+            return View();
         }
 
         [HttpPost]
@@ -113,13 +165,16 @@ namespace new_app.Controllers
                 _context.Countries.Add(country);
             else
             {
-                var countryInDb = await _context.Countries.SingleAsync(c => c.Id == country.Id);
-                countryInDb.Name = country.Name;
+                var countryInDb = await _context.Countries.SingleOrDefaultAsync(c => c.Id == country.Id);
+                if (countryInDb != null)
+                {
+                    countryInDb.Name = country.Name;
+                }
             }
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("New", "Hotels");
+            return RedirectToAction("Form");
         }
     }
 }
