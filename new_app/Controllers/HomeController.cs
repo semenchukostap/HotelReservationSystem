@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using new_app.Models;
+using HotelReservationSystem.Models;
 using System.Diagnostics;
 
-namespace new_app.Controllers
+namespace HotelReservationSystem.Controllers
 {
     public class HomeController : Controller
     {
@@ -29,12 +29,5 @@ namespace new_app.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-    }
-
-    public class ErrorViewModel
-    {
-        public string? RequestId { get; set; }
-
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }
