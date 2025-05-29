@@ -1,0 +1,101 @@
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<h2>Hotels</h2>
+<p>
+    <a asp-action="New" class="btn btn-primary">New Hotel</a>
+</p>
+
+<table id="hotels" class="table table-bordered table-hover display responsive nowrap">
+    <thead>
+        <tr>
+            <th>Hotel</th>
+            <th>Stars</th>
+            <th>Country</th>
+            <th>City</th>
+            <th>Price per night</th>
+            <th>All inclusive</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        // Global Ajax Error Handler
+        $.fn.dataTable.ext.errMode = 'none';
+        $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+            console.error('DataTables Ajax Error:', thrownError);
+            toastr.error('An error occurred while fetching data. Please try again.', 'Error');
+        });
+
+        $(document).ready(function () {
+            var table = $("#hotels").DataTable({
+                ajax: {
+                    url: "/api/v1/hotels",
+                    dataSrc: "",
+                    error: function (xhr, error, thrown) {
+                        toastr.error('Could not load hotel data', 'Error');
+                    }
+                },
+                responsive: true,
+                processing: true,
+                language: {
+                    processing: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>'
+                },
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                columns: [
+                    {
+                        data: "name"
+                    },
+                    {
+                        data: "stars"
+                    },
+                    {
+                        data: "country.name"
+                    },
+                    {
+                        data: "city"
+                    },
+                    {
+                        data: "pricePerNight",
+                        render: function(data) {
+                            return new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: 'USD'
+                            }).format(data);
+                        }
+                    },
+                    {
+                        data: "isAllInclusive",
+                        render: function(data) {
+                            return data ? "Yes" : "No";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data, type, hotel) {
+                            return `<a href='/hotels/edit/${data}' class='btn btn-link'>Edit</a>`;
+                        }
+                    }
+                ],
+                initComplete: function() {
+                    console.log('DataTable initialization complete');
+                }
+            });
+
+            // Handle DataTable specific errors
+            table.on('error.dt', function (e, settings, techNote, message) {
+                console.error('DataTable error:', message);
+                toastr.error('An error occurred in the data table', 'Error');
+            });
+        });
+    </script>
+}

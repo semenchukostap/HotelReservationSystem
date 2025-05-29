@@ -1,0 +1,14 @@
+# Visual Studio files
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.pdb
+*.exe
+
+# NuGet packages
+packages/
+*.nupkg

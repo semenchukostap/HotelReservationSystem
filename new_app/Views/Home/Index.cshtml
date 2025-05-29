@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Book&Go</h1>
+    <p class="lead">Welcome to Book&Go - Your Hotel Reservation System</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Hotels</h2>
+        <p>
+            Browse our collection of hotels in various countries.
+        </p>
+        <p><a class="btn btn-primary" asp-controller="Hotels" asp-action="Index">View Hotels &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Customers</h2>
+        <p>
+            View customer information and manage customer accounts.
+        </p>
+        <p><a class="btn btn-primary" asp-controller="Customers" asp-action="Index">View Customers &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Orders</h2>
+        <p>
+            Manage hotel reservations and orders.
+        </p>
+        <p><a class="btn btn-primary" asp-controller="Orders" asp-action="Index">View Orders &raquo;</a></p>
+    </div>
+</div>
