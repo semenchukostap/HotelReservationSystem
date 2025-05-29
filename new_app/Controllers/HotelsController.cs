@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using HotelReservationSystem.Data;
 using HotelReservationSystem.Models;
 using HotelReservationSystem.ViewModels;
@@ -11,60 +12,69 @@ namespace HotelReservationSystem.Controllers;
 public class HotelsController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<HotelsController> _logger;
     
-    public HotelsController(ApplicationDbContext context)
+    public HotelsController(ApplicationDbContext context, ILogger<HotelsController> logger)
     {
-        _context = context;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     [AllowAnonymous]
     public IActionResult Index()
     {
-        if (User.IsInRole(RoleNames.CanManageHotels))
-            return View("List");
+        try
+        {
+            if (User.IsInRole(RoleNames.CanManageHotels))
+                return View("List");
 
-        return View("ReadOnlyList");
+            return View("ReadOnlyList");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while accessing the index page");
+            return StatusCode(500, "An unexpected error occurred");
+        }
     }
 
     [Authorize(Roles = RoleNames.CanManageHotels)]
-    public IActionResult New()
+    public async Task<IActionResult> New()
     {
-        var countries = _context.Countries.ToList();
-
-        var viewModel = new HotelViewModel()
+        try
         {
-            Hotel = new Hotel(),
-            Countries = countries
-        };
+            var countries = await _context.Countries.ToListAsync();
 
-        return View("Form", viewModel);
+            var viewModel = new HotelViewModel
+            {
+                Hotel = new Hotel(),
+                Countries = countries
+            };
+
+            return View("Form", viewModel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while creating new hotel form");
+            return StatusCode(500, "An unexpected error occurred");
+        }
     }
 
     [Authorize(Roles = RoleNames.CanManageHotels)]
     public async Task<IActionResult> Edit(int id)
     {
-        var hotel = await _context.Hotels.SingleOrDefaultAsync(h => h.Id == id);
-
-        if (hotel == null)
-            return NotFound();
-
-        var viewModel = new HotelViewModel()
+        try
         {
-            Hotel = hotel,
-            Countries = await _context.Countries.ToListAsync()
-        };
+            var hotel = await _context.Hotels
+                .AsNoTracking()
+                .SingleOrDefaultAsync(h => h.Id == id);
 
-        return View("Form", viewModel);
-    }
+            if (hotel == null)
+            {
+                _logger.LogWarning("Hotel with ID {HotelId} not found", id);
+                return NotFound();
+            }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    [Authorize(Roles = RoleNames.CanManageHotels)]
-    public async Task<IActionResult> Save(Hotel hotel)
-    {
-        if (!ModelState.IsValid)
-        {
-            var viewModel = new HotelViewModel()
+            var viewModel = new HotelViewModel
             {
                 Hotel = hotel,
                 Countries = await _context.Countries.ToListAsync()
@@ -72,30 +82,82 @@ public class HotelsController : Controller
 
             return View("Form", viewModel);
         }
-
-        if (hotel.Id == 0)
-            _context.Hotels.Add(hotel);
-        else
+        catch (Exception ex)
         {
-            var hotelInDb = await _context.Hotels.SingleAsync(c => c.Id == hotel.Id);
-            hotelInDb.Name = hotel.Name;
-            hotelInDb.City = hotel.City;
-            hotelInDb.CountryId = hotel.CountryId;
-            hotelInDb.IsAllInclusive = hotel.IsAllInclusive;
-            hotelInDb.PricePerNight = hotel.PricePerNight;
-            hotelInDb.Stars = hotel.Stars;
+            _logger.LogError(ex, "Error occurred while editing hotel with ID {HotelId}", id);
+            return StatusCode(500, "An unexpected error occurred");
         }
-
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction("Index", "Hotels");
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.CanManageHotels)]
+    public async Task<IActionResult> Save(Hotel hotel)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new HotelViewModel
+                {
+                    Hotel = hotel,
+                    Countries = await _context.Countries.ToListAsync()
+                };
+
+                return View("Form", viewModel);
+            }
+
+            if (hotel.Id == 0)
+            {
+                await _context.Hotels.AddAsync(hotel);
+                _logger.LogInformation("Created new hotel: {HotelName}", hotel.Name);
+            }
+            else
+            {
+                var hotelInDb = await _context.Hotels.SingleAsync(c => c.Id == hotel.Id);
+                hotelInDb.Name = hotel.Name;
+                hotelInDb.City = hotel.City;
+                hotelInDb.CountryId = hotel.CountryId;
+                hotelInDb.IsAllInclusive = hotel.IsAllInclusive;
+                hotelInDb.PricePerNight = hotel.PricePerNight;
+                hotelInDb.Stars = hotel.Stars;
+                _logger.LogInformation("Updated hotel with ID {HotelId}", hotel.Id);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error occurred while saving hotel");
+            ModelState.AddModelError("", "Unable to save changes. Please try again.");
+            var viewModel = new HotelViewModel
+            {
+                Hotel = hotel,
+                Countries = await _context.Countries.ToListAsync()
+            };
+            return View("Form", viewModel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error occurred while saving hotel");
+            return StatusCode(500, "An unexpected error occurred");
+        }
+    }
+
+    [Authorize(Roles = RoleNames.CanManageHotels)]
     public IActionResult NewCountry()
     {
-        var country = new Country();
-
-        return View("NewCountryForm", country);
+        try
+        {
+            return View("NewCountryForm", new Country());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while creating new country form");
+            return StatusCode(500, "An unexpected error occurred");
+        }
     }
 
     [HttpPost]
@@ -103,21 +165,39 @@ public class HotelsController : Controller
     [Authorize(Roles = RoleNames.CanManageHotels)]
     public async Task<IActionResult> SaveCountry(Country country)
     {
-        if (!ModelState.IsValid)
+        try
         {
+            if (!ModelState.IsValid)
+            {
+                return View("NewCountryForm", country);
+            }
+
+            if (country.Id == 0)
+            {
+                await _context.Countries.AddAsync(country);
+                _logger.LogInformation("Created new country: {CountryName}", country.Name);
+            }
+            else
+            {
+                var countryInDb = await _context.Countries.SingleAsync(c => c.Id == country.Id);
+                countryInDb.Name = country.Name;
+                _logger.LogInformation("Updated country with ID {CountryId}", country.Id);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(New));
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error occurred while saving country");
+            ModelState.AddModelError("", "Unable to save changes. Please try again.");
             return View("NewCountryForm", country);
         }
-
-        if (country.Id == 0)
-            _context.Countries.Add(country);
-        else
+        catch (Exception ex)
         {
-            var countryInDb = await _context.Countries.SingleAsync(c => c.Id == country.Id);
-            countryInDb.Name = country.Name;
+            _logger.LogError(ex, "Unexpected error occurred while saving country");
+            return StatusCode(500, "An unexpected error occurred");
         }
-
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction("New", "Hotels");
     }
 }
