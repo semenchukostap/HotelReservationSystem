@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using new_app.Models;
+using HotelReservationSystem.Models;
 
-namespace new_app.Data
+namespace HotelReservationSystem.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
