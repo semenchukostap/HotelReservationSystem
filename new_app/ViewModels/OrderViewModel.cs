@@ -19,10 +19,23 @@ namespace HotelReservationSystem.ViewModels
         
         [Required]
         [Display(Name = "Start Date")]
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
         
         [Required]
         [Display(Name = "End Date")]
+        [DataType(DataType.Date)]
+        [CustomValidation(typeof(OrderViewModel), nameof(ValidateEndDate))]
         public DateTime EndDate { get; set; }
+        
+        public static ValidationResult? ValidateEndDate(DateTime endDate, ValidationContext context)
+        {
+            var instance = (OrderViewModel)context.ObjectInstance;
+            if (endDate <= instance.StartDate)
+            {
+                return new ValidationResult("End date must be after start date");
+            }
+            return ValidationResult.Success;
+        }
     }
 }
