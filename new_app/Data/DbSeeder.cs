@@ -23,7 +23,7 @@ namespace HotelReservationSystem.Data
             }
 
             // Add admin user if it doesn't exist
-            const string adminEmail = "admin@example.com";
+            const string adminEmail = "admin@admin.com";
             if (await userManager.FindByEmailAsync(adminEmail) == null)
             {
                 var adminUser = new ApplicationUser
@@ -34,13 +34,23 @@ namespace HotelReservationSystem.Data
                     Phone = "123-456-7890"
                 };
 
-                var result = await userManager.CreateAsync(adminUser, "Admin123!");
+                var result = await userManager.CreateAsync(adminUser, "Admin1!");
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(adminUser, RoleName.Admin);
                 }
             }
 
+            await SeedInitialData(context);
+        }
+
+        private static async Task SeedInitialData(ApplicationDbContext context)
+        {
+            await SeedCountries(context);
+        }
+
+        private static async Task SeedCountries(ApplicationDbContext context)
+        {
             // Seed countries if none exist
             if (!await context.Countries.AnyAsync())
             {
@@ -58,7 +68,7 @@ namespace HotelReservationSystem.Data
                     new Country { Name = "Mexico" }
                 };
 
-                context.Countries.AddRange(countries);
+                await context.Countries.AddRangeAsync(countries);
                 await context.SaveChangesAsync();
             }
         }
