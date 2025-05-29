@@ -52,7 +52,7 @@ namespace new_app.Controllers.API
 
         // POST: api/Hotels
         [HttpPost]
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<ActionResult<HotelDto>> CreateHotel(HotelDto hotelDto)
         {
             if (!ModelState.IsValid)
@@ -70,7 +70,7 @@ namespace new_app.Controllers.API
 
         // PUT: api/Hotels/5
         [HttpPut("{id}")]
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> UpdateHotel(int id, HotelDto hotelDto)
         {
             if (!ModelState.IsValid)
@@ -90,7 +90,7 @@ namespace new_app.Controllers.API
 
         // DELETE: api/Hotels/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = RoleName.CanManageHotels)]
+        [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> DeleteHotel(int id)
         {
             var hotel = await _context.Hotels.FindAsync(id);
