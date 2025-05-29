@@ -1,0 +1,117 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "bootstrap@5.3.2",
+      "destination": "wwwroot/lib/bootstrap",
+      "files": [
+        "js/bootstrap.bundle.min.js",
+        "js/bootstrap.bundle.js",
+        "css/bootstrap.min.css",
+        "css/bootstrap.css"
+      ]
+    },
+    {
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/lib/jquery",
+      "files": [
+        "jquery.min.js",
+        "jquery.js"
+      ]
+    },
+    {
+      "library": "jquery-validate@1.20.0",
+      "destination": "wwwroot/lib/jquery-validate",
+      "files": [
+        "jquery.validate.min.js",
+        "jquery.validate.js",
+        "additional-methods.min.js",
+        "additional-methods.js"
+      ]
+    },
+    {
+      "library": "jquery-validation-unobtrusive@4.0.0",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive",
+      "files": [
+        "jquery.validate.unobtrusive.min.js",
+        "jquery.validate.unobtrusive.js"
+      ]
+    },
+    {
+      "library": "datatables@1.10.21",
+      "destination": "wwwroot/lib/datatables",
+      "files": [
+        "js/jquery.dataTables.min.js",
+        "js/jquery.dataTables.js"
+      ]
+    },
+    {
+      "library": "datatables.net-bs5@1.13.6",
+      "destination": "wwwroot/lib/datatables-bs5",
+      "files": [
+        "dataTables.bootstrap5.min.js",
+        "dataTables.bootstrap5.min.css",
+        "dataTables.bootstrap5.js",
+        "dataTables.bootstrap5.css"
+      ]
+    },
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr",
+      "files": [
+        "toastr.min.js",
+        "toastr.js",
+        "toastr.min.css",
+        "toastr.css"
+      ]
+    },
+    {
+      "library": "typeahead.js@0.11.1",
+      "destination": "wwwroot/lib/typeahead",
+      "files": [
+        "typeahead.bundle.min.js",
+        "typeahead.bundle.js",
+        "typeahead.jquery.min.js",
+        "typeahead.jquery.js",
+        "bloodhound.min.js",
+        "bloodhound.js"
+      ]
+    },
+    {
+      "library": "bootbox.js@6.0.0",
+      "destination": "wwwroot/lib/bootbox",
+      "files": [
+        "bootbox.min.js",
+        "bootbox.js"
+      ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "@popperjs/core@2.11.8",
+      "destination": "wwwroot/lib/popper",
+      "files": [
+        "dist/umd/popper.min.js",
+        "dist/umd/popper.js"
+      ]
+    },
+    {
+      "library": "font-awesome@6.4.2",
+      "destination": "wwwroot/lib/font-awesome",
+      "files": [
+        "css/all.min.css",
+        "css/all.css",
+        "js/all.min.js",
+        "js/all.js",
+        "webfonts/fa-brands-400.ttf",
+        "webfonts/fa-brands-400.woff2",
+        "webfonts/fa-regular-400.ttf",
+        "webfonts/fa-regular-400.woff2",
+        "webfonts/fa-solid-900.ttf",
+        "webfonts/fa-solid-900.woff2",
+        "webfonts/fa-v4compatibility.ttf",
+        "webfonts/fa-v4compatibility.woff2"
+      ]
+    }
+  ]
+}

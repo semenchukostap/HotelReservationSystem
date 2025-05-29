@@ -1,0 +1,117 @@
+/* DataTables custom styling for Bootstrap 5 compatibility */
+
+:root {
+  --dt-primary: #0d6efd;
+  --dt-primary-light: rgba(13, 110, 253, 0.1);
+  --dt-primary-hover: #0b5ed7;
+  --dt-active-row: #d4ebf2;
+}
+
+/* Pagination styling */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 0.375rem 0.75rem;
+  margin: 0 0.25rem;
+  border-radius: 0.25rem;
+  border: 1px solid transparent;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: var(--dt-primary);
+  color: white !important;
+  border-color: var(--dt-primary);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: var(--dt-primary-light);
+  color: var(--dt-primary) !important;
+  border-color: var(--dt-primary);
+}
+
+/* Active row styling */
+table.dataTable tbody tr.active > td,
+table.dataTable tbody tr.active > th {
+  background-color: var(--dt-active-row);
+}
+
+/* Responsive table on small screens */
+@media screen and (max-width: 767px) {
+  table.dataTable.responsive tbody tr td:before {
+    font-weight: bold;
+  }
+}
+
+/* Search box styling */
+.dataTables_wrapper .dataTables_filter input {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+  border-color: var(--dt-primary);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* DataTable length (show entries) styling */
+.dataTables_wrapper .dataTables_length select {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  appearance: none;
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+  border-color: var(--dt-primary);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Table header styling */
+table.dataTable thead th {
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+  padding: 0.75rem;
+}
+
+/* Table border styling */
+table.dataTable.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+table.dataTable.table-bordered th,
+table.dataTable.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+/* Striped rows */
+table.dataTable.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Hover effect */
+table.dataTable.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+/* Delete button styling */
+table.dataTable .btn-link.js-delete {
+  color: var(--dt-primary);
+  text-decoration: none;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+table.dataTable .btn-link.js-delete:hover {
+  color: var(--dt-primary-hover);
+  text-decoration: underline;
+}

@@ -1,0 +1,71 @@
+@model HotelReservationSystem.Models.ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<main class="container mt-5">
+    <header class="row">
+        <div class="col-md-12 text-center mb-4">
+            <h1 class="display-4 text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Oops!</h1>
+            <h2 class="text-danger mb-4">An error occurred while processing your request.</h2>
+        </div>
+    </header>
+
+    <section class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <article class="card shadow border-danger mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="card-title mb-0"><i class="bi bi-bug-fill me-2"></i>Error Details</h4>
+                </div>
+                <div class="card-body">
+                    
+                    @if (Model.ShowRequestId)
+                    {
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="me-2"><strong>Request ID:</strong></span>
+                            <code class="bg-light px-3 py-2 rounded text-danger fw-bold">@Model.RequestId</code>
+                        </div>
+                    }
+                    
+                    <div class="alert alert-danger d-flex align-items-center">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <p class="mb-0">
+                            We apologize for the inconvenience. Our team has been notified of this issue.
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <aside class="card border-info mt-4">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="bi bi-gear-fill me-2"></i>Development Information</h4>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
+                    </p>
+                    <p>
+                        <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
+                        It can result in displaying sensitive information from exceptions to end users.
+                    </p>
+                    <environment include="Development">
+                        <div class="alert alert-warning mt-3 d-flex align-items-center">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            <div>
+                                <strong>Development Mode Active:</strong> You are currently running in Development mode.
+                                <hr>
+                                <p class="mb-0">Check your logs for more detailed error information. If debugging locally, use the browser's developer tools to inspect network requests and responses.</p>
+                            </div>
+                        </div>
+                    </environment>
+                </div>
+            </aside>
+
+            <nav class="text-center mt-4">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+                    <i class="bi bi-house-door-fill me-2"></i>Return to Home Page
+                </a>
+            </nav>
+        </div>
+    </section>
+</main>

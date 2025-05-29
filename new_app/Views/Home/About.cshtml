@@ -1,0 +1,211 @@
+@{
+    ViewData["Title"] = "About Us";
+}
+
+<main class="container py-5">
+    <header class="mb-5 text-center text-md-start">
+        <h1 class="display-4 fw-bold text-primary mb-3">@ViewData["Title"]</h1>
+        <hr class="my-4">
+    </header>
+    
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <section class="mb-4">
+                <h2 class="fw-bold mb-3">About Book&Go Hotel Reservation System</h2>
+                <p class="lead fs-4 text-secondary">
+                    A modern hotel reservation platform designed to simplify booking management and enhance guest experiences.
+                </p>
+                <p class="mb-4">
+                    Built with ASP.NET Core 8.0, this application provides a robust and scalable solution for hotels of all sizes.
+                    Our system streamlines reservation processes while offering powerful management tools for hotel staff.
+                </p>
+                
+                <div class="card border-0 shadow rounded-3 mt-4 mb-4 overflow-hidden">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-stars me-2"></i>Key Features</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex align-items-center py-3 px-4 border-start border-4 border-primary">
+                                <i class="bi bi-building-fill me-3 text-primary fs-4"></i>
+                                <div>
+                                    <strong>Comprehensive Hotel Management</strong>
+                                    <p class="mb-0 text-muted small">Complete solution for property listings and management</p>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center py-3 px-4">
+                                <i class="bi bi-person-circle me-3 text-primary fs-4"></i>
+                                <div>
+                                    <strong>Customer Profiles</strong>
+                                    <p class="mb-0 text-muted small">Track customer preferences and booking history</p>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center py-3 px-4 border-start border-4 border-primary">
+                                <i class="bi bi-calendar-check me-3 text-primary fs-4"></i>
+                                <div>
+                                    <strong>Reservation Management</strong>
+                                    <p class="mb-0 text-muted small">Streamlined booking and availability tracking</p>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center py-3 px-4">
+                                <i class="bi bi-shield-lock me-3 text-primary fs-4"></i>
+                                <div>
+                                    <strong>Secure Authentication</strong>
+                                    <p class="mb-0 text-muted small">Industry-standard security practices</p>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center py-3 px-4 border-start border-4 border-primary">
+                                <i class="bi bi-person-gear me-3 text-primary fs-4"></i>
+                                <div>
+                                    <strong>Role-based Access Control</strong>
+                                    <p class="mb-0 text-muted small">Granular permissions for different user types</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <section class="mt-5">
+                    <h3 class="fw-bold mb-4">Technology Stack</h3>
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-filetype-html text-primary fs-1 mb-3"></i>
+                                    <h5 class="card-title">Frontend</h5>
+                                    <p class="card-text text-muted">Built with modern Bootstrap 5 and Razor views</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-database text-primary fs-1 mb-3"></i>
+                                    <h5 class="card-title">Database</h5>
+                                    <p class="card-text text-muted">SQL Server with Entity Framework Core</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-code-slash text-primary fs-1 mb-3"></i>
+                                    <h5 class="card-title">Backend</h5>
+                                    <p class="card-text text-muted">ASP.NET Core 8.0 MVC architecture</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="mt-5">
+                    <h3 class="fw-bold mb-4">Our Team</h3>
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="flex-shrink-0">
+                                            <img src="/images/team/ceo.jpg" alt="CEO" class="rounded-circle" width="64" height="64">
+                                        </div>
+                                        <div class="ms-3">
+                                            <h5 class="card-title mb-0">Jane Smith</h5>
+                                            <p class="text-muted mb-0">Chief Executive Officer</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">With over 15 years in hospitality management, Jane leads our vision for digital transformation in hotel booking.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="flex-shrink-0">
+                                            <img src="/images/team/cto.jpg" alt="CTO" class="rounded-circle" width="64" height="64">
+                                        </div>
+                                        <div class="ms-3">
+                                            <h5 class="card-title mb-0">Michael Chen</h5>
+                                            <p class="text-muted mb-0">Chief Technology Officer</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">Michael brings expertise in cloud architecture and software development to create our scalable booking platform.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </div>
+        
+        <div class="col-lg-4">
+            <aside>
+                <div class="card border-0 shadow rounded-3 mb-4">
+                    <div class="card-header bg-gradient text-white py-3" style="background-color: #2c3e50;">
+                        <h4 class="h5 mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>System Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-building-check text-primary fs-1"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="fw-bold text-primary mb-1">Book&Go</h5>
+                                <p class="card-text text-muted mb-0"><span class="badge bg-primary me-2">Version 2.1.0</span></p>
+                                <p class="card-text text-muted mb-0">Framework: ASP.NET Core 8.0</p>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">
+                                <i class="bi bi-c-circle"></i> @DateTime.Now.Year - Book&Go Reservation
+                            </span>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-success d-flex align-items-center gap-1">
+                                    <i class="bi bi-check-circle-fill"></i> Online
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card border-0 shadow-sm rounded-3 border-start border-5 border-info">
+                    <div class="card-body p-4">
+                        <h5 class="card-title fw-bold d-flex align-items-center">
+                            <i class="bi bi-headset text-info me-2"></i>
+                            Need Help?
+                        </h5>
+                        <p class="card-text">Our support team is available 24/7 to assist with any questions or issues.</p>
+                        <hr>
+                        <div class="d-grid gap-2">
+                            <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-info">
+                                <i class="bi bi-envelope me-2"></i>support@bookandgo.example.com
+                            </a>
+                            <button class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#supportModal">
+                                <i class="bi bi-chat-dots me-2"></i>Live Chat Support
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-primary text-white mt-4 border-0 rounded-3 shadow">
+                    <div class="card-body p-4">
+                        <h5 class="card-title fw-bold">Latest Updates</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><i class="bi bi-check2-circle me-2"></i>New room availability calendar</li>
+                            <li class="mb-2"><i class="bi bi-check2-circle me-2"></i>Mobile-friendly booking process</li>
+                            <li><i class="bi bi-check2-circle me-2"></i>Integration with payment gateways</li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    
+    <footer class="mt-5 pt-4 border-top text-center">
+        <p class="text-muted">
+            Book&Go Hotel Reservation System — Making travel easier since @(DateTime.Now.Year - 3)
+        </p>
+    </footer>
+</main>

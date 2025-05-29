@@ -1,0 +1,99 @@
+@*
+    This file has been successfully migrated from .NET Framework to .NET 8.
+*@
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<h3 class="page-header">Hotels</h3>
+
+<div>
+    <a asp-controller="Hotels" asp-action="Form" class="btn btn-primary">New Hotel</a>
+</div>
+<br />
+
+<div class="table-responsive">
+    <table id="hotels" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Stars</th>
+                <th>Price</th>
+                <th>All Inclusive</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#hotels").DataTable({
+                ajax: {
+                    url: "/api/hotels",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: (data, type, hotel) => {
+                            return `<a href='/hotels/form/${hotel.id}'>${hotel.name}</a>`;
+                        }
+                    },
+                    {
+                        data: "countryName"
+                    },
+                    {
+                        data: "city"
+                    },
+                    {
+                        data: "stars"
+                    },
+                    {
+                        data: "pricePerNight",
+                        render: (data) => {
+                            return `$${data.toFixed(2)}`;
+                        }
+                    },
+                    {
+                        data: "isAllInclusive",
+                        render: (data) => {
+                            return data ? "Yes" : "No";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: (data) => {
+                            return `<button class='btn-link js-delete' data-hotel-id=${data}>Delete</button>`;
+                        }
+                    }
+                ]
+            });
+
+            $("#hotels").on('click', '.js-delete', function() {
+                const button = $(this);
+
+                bootbox.confirm("Are you sure you want to delete this hotel?", result => {
+                    if (result) {
+                        $.ajax({
+                            url: `/api/hotels/${button.attr("data-hotel-id")}`,
+                            method: "DELETE",
+                            success: () => {
+                                button.parents("tr").remove();
+                                toastr.success("Hotel successfully removed.");
+                            },
+                            error: (xhr, status, error) => {
+                                toastr.error("An error occurred while deleting the hotel.");
+                                console.error(`Delete error: ${error}`);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
