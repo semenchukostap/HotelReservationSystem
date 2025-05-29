@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace new_app.Models
+namespace HotelReservationSystem.Models
 {
     public class Customer
     {
@@ -8,7 +8,7 @@ namespace new_app.Models
 
         [Required]
         [MaxLength(255)]
-        public string Name { get; set; } = string.Empty;
+        public required string Name { get; set; } = string.Empty;
 
         public DateTime? Birthdate { get; set; }
     }
