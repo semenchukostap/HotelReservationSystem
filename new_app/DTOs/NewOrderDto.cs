@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace HotelReservationSystem.DTOs
@@ -15,5 +16,7 @@ namespace HotelReservationSystem.DTOs
 
         [Required]
         public DateTime EndDate { get; set; }
+
+        public int NumberOfDays { get; set; }
     }
 }
