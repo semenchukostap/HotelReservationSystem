@@ -1,32 +1,32 @@
-&lt;Project Sdk="Microsoft.NET.Sdk.Web"&gt;
-  &lt;PropertyGroup&gt;
-    &lt;TargetFramework&gt;net8.0&lt;/TargetFramework&gt;
-    &lt;Nullable&gt;enable&lt;/Nullable&gt;
-    &lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;
-  &lt;/PropertyGroup&gt;
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
 
-  &lt;ItemGroup&gt;
-    &lt;!-- Core Dependencies --&gt;
-    &lt;PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" /&gt;
-    &lt;PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" /&gt;
-    &lt;PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" /&gt;
+  <ItemGroup>
+    <!-- Core Dependencies -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
     
-    &lt;!-- Authentication --&gt;
-    &lt;PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" /&gt;
-    &lt;PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.0" /&gt;
-    &lt;PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" /&gt;
+    <!-- Authentication -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
     
-    &lt;!-- AutoMapper --&gt;
-    &lt;PackageReference Include="AutoMapper.Collection" Version="9.0.0" /&gt;
-    &lt;PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" /&gt;
+    <!-- AutoMapper -->
+    <PackageReference Include="AutoMapper.Collection" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     
-    &lt;!-- Modern UI Libraries --&gt;
-    &lt;PackageReference Include="Bootstrap" Version="5.3.2" /&gt;
-    &lt;PackageReference Include="jQuery" Version="3.7.1" /&gt;
-    &lt;PackageReference Include="jQuery.Validation" Version="1.19.5" /&gt;
-    &lt;PackageReference Include="toastr" Version="2.1.1" /&gt;
+    <!-- Modern UI Libraries -->
+    <PackageReference Include="Bootstrap" Version="5.3.2" />
+    <PackageReference Include="jQuery" Version="3.7.1" />
+    <PackageReference Include="jQuery.Validation" Version="1.19.5" />
+    <PackageReference Include="toastr" Version="2.1.1" />
     
-    &lt;!-- Application Insights --&gt;
-    &lt;PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" /&gt;
-  &lt;/ItemGroup&gt;
-&lt;/Project&gt;
+    <!-- Application Insights -->
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+  </ItemGroup>
+</Project>
