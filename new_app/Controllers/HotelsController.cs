@@ -85,18 +85,9 @@ namespace new_app.Controllers
         [Authorize(Roles = RoleName.Admin)]
         public async Task<IActionResult> New()
         {
-            var countries = await _context.Countries.ToListAsync();
-
-            var viewModel = new HotelViewModel()
+            var viewModel = new HotelViewModel
             {
-                Id = 0,
-                Name = string.Empty,
-                City = string.Empty,
-                CountryId = 0,
-                IsAllInclusive = false,
-                PricePerNight = 0,
-                Stars = 0,
-                Countries = countries
+                Countries = await _context.Countries.ToListAsync()
             };
 
             return View("Form", viewModel);
@@ -136,45 +127,38 @@ namespace new_app.Controllers
                 return View("Form", viewModel);
             }
 
-            var hotel = new Hotel
+            Hotel hotel;
+            
+            if (viewModel.Id == 0)
             {
-                Id = viewModel.Id,
-                Name = viewModel.Name,
-                City = viewModel.City,
-                CountryId = viewModel.CountryId,
-                IsAllInclusive = viewModel.IsAllInclusive,
-                PricePerNight = viewModel.PricePerNight,
-                Stars = viewModel.Stars
-            };
-
-            if (hotel.Id == 0)
+                hotel = new Hotel();
                 _context.Hotels.Add(hotel);
+            }
             else
             {
-                var hotelInDb = await _context.Hotels.SingleOrDefaultAsync(c => c.Id == hotel.Id);
+                hotel = await _context.Hotels.FindAsync(viewModel.Id);
                 
-                if (hotelInDb == null)
+                if (hotel == null)
                     return NotFound();
-                    
-                hotelInDb.Name = hotel.Name;
-                hotelInDb.City = hotel.City;
-                hotelInDb.CountryId = hotel.CountryId;
-                hotelInDb.IsAllInclusive = hotel.IsAllInclusive;
-                hotelInDb.PricePerNight = hotel.PricePerNight;
-                hotelInDb.Stars = hotel.Stars;
             }
+            
+            // Map viewModel to entity
+            hotel.Name = viewModel.Name;
+            hotel.City = viewModel.City;
+            hotel.CountryId = viewModel.CountryId;
+            hotel.IsAllInclusive = viewModel.IsAllInclusive;
+            hotel.PricePerNight = viewModel.PricePerNight;
+            hotel.Stars = viewModel.Stars;
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("List");
+            return RedirectToAction(nameof(List));
         }
 
         [Authorize(Roles = RoleName.Admin)]
         public IActionResult NewCountry()
         {
-            var country = new Country();
-
-            return View("NewCountryForm", country);
+            return View("NewCountryForm", new Country());
         }
 
         [Authorize(Roles = RoleName.Admin)]
@@ -197,7 +181,7 @@ namespace new_app.Controllers
                 _context.Countries.Add(country);
             else
             {
-                var countryInDb = await _context.Countries.SingleOrDefaultAsync(c => c.Id == country.Id);
+                var countryInDb = await _context.Countries.FindAsync(country.Id);
                 if (countryInDb != null)
                 {
                     countryInDb.Name = country.Name;
@@ -206,7 +190,7 @@ namespace new_app.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Form");
+            return RedirectToAction(nameof(Form));
         }
     }
 }
