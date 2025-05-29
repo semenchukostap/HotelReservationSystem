@@ -19,10 +19,10 @@ namespace HotelReservationSystem.Data
         {
         }
 
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Hotel> Hotels { get; set; }
-        public DbSet<Country> Countries { get; set; }
-        public DbSet<Order> Orders { get; set; }
+        public DbSet<Customer> Customers { get; set; } = null!;
+        public DbSet<Hotel> Hotels { get; set; } = null!;
+        public DbSet<Country> Countries { get; set; } = null!;
+        public DbSet<Order> Orders { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -116,9 +116,15 @@ namespace HotelReservationSystem.Data
             string connectionString = configuration.GetConnectionString("DefaultConnection") ?? 
                 throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             
-            // Register DbContext with SQL Server
+            // Register DbContext with SQL Server with connection resilience
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString, sqlServerOptions =>
+                {
+                    sqlServerOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null);
+                }));
             
             // Configure Identity with the ApplicationDbContext
             services.AddIdentity<ApplicationUser, ApplicationRole>(options => 
