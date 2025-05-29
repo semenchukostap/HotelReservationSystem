@@ -1,0 +1,96 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4">Welcome to Hotel Reservation System</h1>
+        <p class="lead">A modern ASP.NET Core MVC application with Bootstrap 5</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card hotel-card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Hotels Management</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Manage hotels in the system, add new hotels, update existing ones.</p>
+                    <a asp-controller="Hotels" asp-action="Index" class="btn btn-outline-primary mt-2">
+                        <i class="bi bi-building"></i> Manage Hotels
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card hotel-card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Customers Management</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Add and manage customer information, view customer details.</p>
+                    <a asp-controller="Customers" asp-action="Index" class="btn btn-outline-success mt-2">
+                        <i class="bi bi-people"></i> Manage Customers
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card hotel-card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">Orders Management</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Create new orders, view existing orders, and manage reservations.</p>
+                    <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-info mt-2">
+                        <i class="bi bi-calendar-check"></i> Manage Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 p-4 bg-light rounded">
+        <h2>Features</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Responsive Design
+                        <span class="badge bg-primary rounded-pill">Bootstrap 5</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Modern Architecture
+                        <span class="badge bg-success rounded-pill">.NET 8</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Database Integration
+                        <span class="badge bg-info rounded-pill">Entity Framework Core</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">Welcome to the new system!</h4>
+                    <p>This is a modern Hotel Reservation System built with ASP.NET Core MVC and Bootstrap 5.</p>
+                    <hr>
+                    <p class="mb-0">Explore the features using the navigation menu above.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Example of using Bootstrap components from JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show a toast notification when the page loads
+            if (typeof toastr !== 'undefined') {
+                toastr.success('Welcome to the Hotel Reservation System!');
+            }
+        });
+    </script>
+}
