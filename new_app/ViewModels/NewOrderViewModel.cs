@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HotelReservationSystem.ViewModels
 {
-    public class OrderViewModel
+    public class NewOrderViewModel
     {
         [Required]
         [Display(Name = "Customer")]
