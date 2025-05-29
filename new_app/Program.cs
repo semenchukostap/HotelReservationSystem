@@ -1,9 +1,8 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using HotelReservationSystem.Data;
 using HotelReservationSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,95 +14,75 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Add Identity
+// Add Identity services
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
-    options.SignIn.RequireConfirmedAccount = false;
+    // Configure identity options
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 6;
+    
+    options.User.RequireUniqueEmail = true;
+    
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Authentication options
-builder.Services.ConfigureApplicationCookie(options =>
-{
+// Configure Authentication Cookie settings
+builder.Services.ConfigureApplicationCookie(options => {
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.SlidingExpiration = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 });
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-// Add services to the container.
+// Add controllers with views & API controllers
 builder.Services.AddControllersWithViews();
 
-// Add ApplicationInsights
+// Add Application Insights telemetry
 builder.Services.AddApplicationInsightsTelemetry();
 
-// Add session services
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-// Add custom application services
-builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
-builder.Services.AddScoped<IRoomService, RoomService>();
+// Register DbSeeder as a scoped service
+builder.Services.AddScoped<DbSeeder>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseMigrationsEndPoint();
 }
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days.
+    // The default HSTS value is 30 days. You may want to change this for production scenarios.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCookiePolicy();
-
-app.UseSession();
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Custom middleware for request logging
-app.Use(async (context, next) =>
-{
-    // Log incoming request
-    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation($"Request {context.Request.Method} {context.Request.Path}");
-    
-    await next();
-});
-
-app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
+// Configure endpoint routing (replaces RouteConfig)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Seed database
+// Configure API endpoint routing (replaces WebApiConfig)
+app.MapControllers();
+
+// Seed database with initial roles and admin user
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
@@ -111,8 +90,8 @@ if (app.Environment.IsDevelopment())
         var services = scope.ServiceProvider;
         try
         {
-            await DbSeeder.SeedRolesAndAdminUser(services);
-            await DbSeeder.SeedDefaultData(services);
+            var dbSeeder = services.GetRequiredService<DbSeeder>();
+            await dbSeeder.SeedRolesAndAdminUserAsync();
         }
         catch (Exception ex)
         {
