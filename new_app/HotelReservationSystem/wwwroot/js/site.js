@@ -38,29 +38,13 @@ if (typeof toastr !== 'undefined') {
 
 // DataTables default configuration
 $(document).ready(function () {
-    // Apply DataTables to tables with the 'datatable' class
-    $('.datatable').each(function () {
-        $(this).DataTable({
-            responsive: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records"
-            }
-        });
-    });
-
-    // Apply custom DataTables to reservation tables
-    $('#reservationsTable').DataTable({
-        responsive: true,
-        order: [[0, 'desc']],
-        columnDefs: [
-            { type: 'date', targets: [1, 2] }
-        ],
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'excel', 'pdf', 'print'
-        ]
-    });
+    // Initialize standard DataTables
+    initializeDataTables();
+    
+    // Initialize custom DataTables
+    initializeReservationTables();
+    initializeGuestTables();
+    initializeRoomTables();
 
     // Handle Bootstrap modal events
     $('.modal').on('show.bs.modal', function (e) {
@@ -171,6 +155,113 @@ $(document).ready(function () {
         });
     }
 });
+
+// Initialize standard DataTables
+function initializeDataTables() {
+    // Apply DataTables to tables with the 'datatable' class
+    $('.datatable').each(function () {
+        $(this).DataTable({
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records"
+            }
+        });
+    });
+}
+
+// Initialize reservation tables with specific features
+function initializeReservationTables() {
+    // Apply custom DataTables to reservation tables
+    $('#reservationsTable').DataTable({
+        responsive: true,
+        order: [[0, 'desc']],
+        columnDefs: [
+            { type: 'date', targets: [1, 2] }
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf', 'print'
+        ]
+    });
+    
+    // Upcoming reservations table
+    $('#upcomingReservationsTable').DataTable({
+        responsive: true,
+        order: [[1, 'asc']],
+        columnDefs: [
+            { type: 'date', targets: [1, 2] }
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf'
+        ]
+    });
+    
+    // Past reservations table
+    $('#pastReservationsTable').DataTable({
+        responsive: true,
+        order: [[2, 'desc']],
+        columnDefs: [
+            { type: 'date', targets: [1, 2] }
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf'
+        ]
+    });
+}
+
+// Initialize guest tables with specific features
+function initializeGuestTables() {
+    $('#guestsTable').DataTable({
+        responsive: true,
+        order: [[0, 'asc']],
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf', 'print'
+        ]
+    });
+    
+    $('#guestHistoryTable').DataTable({
+        responsive: true,
+        order: [[0, 'desc']],
+        columnDefs: [
+            { type: 'date', targets: [1, 2] }
+        ]
+    });
+}
+
+// Initialize room tables with specific features
+function initializeRoomTables() {
+    $('#roomsTable').DataTable({
+        responsive: true,
+        columnDefs: [
+            { type: 'string', targets: [0] },
+            { type: 'num', targets: [1, 2] }
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf'
+        ]
+    });
+    
+    $('#roomAvailabilityTable').DataTable({
+        responsive: true,
+        order: [[3, 'asc']],
+        columnDefs: [
+            { type: 'date', targets: [3] }
+        ]
+    });
+}
+
+// Refresh DataTable with new data
+function refreshDataTable(tableId, newData) {
+    const table = $('#' + tableId).DataTable();
+    table.clear();
+    table.rows.add(newData);
+    table.draw();
+}
 
 // Handle form submissions with AJAX
 function handleAjaxForm(formSelector, successCallback, errorCallback) {
@@ -290,4 +381,38 @@ function createReservation(formData, successCallback, errorCallback) {
             }
         }
     });
+}
+
+// Export table data to CSV
+function exportTableToCSV(tableId, filename) {
+    const table = $('#' + tableId).DataTable();
+    const csvData = [];
+    
+    // Get headers
+    const headers = [];
+    $(table.columns().header()).each(function() {
+        headers.push($(this).text());
+    });
+    csvData.push(headers);
+    
+    // Get data rows
+    table.rows().every(function() {
+        const rowData = this.data();
+        csvData.push(rowData);
+    });
+    
+    // Convert to CSV
+    let csvString = '';
+    csvData.forEach(function(row) {
+        csvString += row.join(',') + '\n';
+    });
+    
+    // Download file
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
