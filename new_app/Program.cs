@@ -1,30 +1,31 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using new_app.Data;
-using new_app.Models;
-using new_app.Services;
+using HotelReservationSystem.Data;
+using HotelReservationSystem.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// Add services to the container
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+// Add database context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptions();
 
-// Add Identity services
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
+// Add Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
     options.SignIn.RequireConfirmedAccount = false;
-    // Password settings
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
-    options.Password.RequiredUniqueChars = 1;
 })
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
 // Authentication options
 builder.Services.ConfigureApplicationCookie(options =>
@@ -35,14 +36,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 });
 
-// Add MVC services
-builder.Services.AddControllersWithViews();
-
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-// Register application services
-builder.Services.AddScoped<IEmailSender, EmailSender>();
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+// Add ApplicationInsights
+builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
 
@@ -66,11 +67,14 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configure routes (migrated from RouteConfig.cs)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages();
+// Seed database
+if (app.Environment.IsDevelopment())
+{
+    await DbSeeder.SeedRolesAndAdminUser(app.Services);
+}
 
 app.Run();
