@@ -45,12 +45,27 @@ builder.Services.AddControllersWithViews();
 // Add ApplicationInsights
 builder.Services.AddApplicationInsightsTelemetry();
 
+// Add session services
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Add custom application services
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.UseMigrationsEndPoint();
 }
 else
 {
@@ -61,11 +76,28 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCookiePolicy();
+
+app.UseSession();
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Custom middleware for request logging
+app.Use(async (context, next) =>
+{
+    // Log incoming request
+    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation($"Request {context.Request.Method} {context.Request.Path}");
+    
+    await next();
+});
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
@@ -74,7 +106,20 @@ app.MapControllerRoute(
 // Seed database
 if (app.Environment.IsDevelopment())
 {
-    await DbSeeder.SeedRolesAndAdminUser(app.Services);
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            await DbSeeder.SeedRolesAndAdminUser(services);
+            await DbSeeder.SeedDefaultData(services);
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while seeding the database.");
+        }
+    }
 }
 
 app.Run();
