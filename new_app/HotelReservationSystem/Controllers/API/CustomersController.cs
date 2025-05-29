@@ -1,0 +1,98 @@
+using HotelReservationSystem.Data;
+using HotelReservationSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace HotelReservationSystem.Controllers.API
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CustomersController : ControllerBase
+    {
+        private readonly ApplicationDbContext _context;
+
+        public CustomersController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/customers
+        [HttpGet]
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
+        {
+            return await _context.Customers.ToListAsync();
+        }
+
+        // GET: api/customers/5
+        [HttpGet("{id}")]
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<ActionResult<Customer>> GetCustomer(int id)
+        {
+            var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
+
+            if (customer == null)
+                return NotFound();
+
+            return Ok(customer);
+        }
+
+        // POST: api/customers
+        [HttpPost]
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<ActionResult<Customer>> CreateCustomer(Customer customer)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
+        }
+
+        // PUT: api/customers/5
+        [HttpPut("{id}")]
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<IActionResult> UpdateCustomer(int id, Customer customer)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (id != customer.Id)
+                return BadRequest("ID mismatch between URL and request body");
+
+            var customerInDb = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
+
+            if (customerInDb == null)
+                return NotFound();
+
+            customerInDb.Name = customer.Name;
+            customerInDb.Birthdate = customer.Birthdate;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // DELETE: api/customers/5
+        [HttpDelete("{id}")]
+        [Authorize(Roles = RoleName.CanManageHotels)]
+        public async Task<IActionResult> DeleteCustomer(int id)
+        {
+            var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
+
+            if (customer == null)
+                return NotFound();
+
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+    }
+}
