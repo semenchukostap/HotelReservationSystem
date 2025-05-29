@@ -19,7 +19,6 @@ namespace HotelReservationSystem.DTOs
         /// <summary>
         /// Gets or sets the customer information associated with the order.
         /// </summary>
-        [Required]
         [JsonPropertyName("customer")]
         public CustomerDto? Customer { get; set; }
         
@@ -33,7 +32,6 @@ namespace HotelReservationSystem.DTOs
         /// <summary>
         /// Gets or sets the hotel information associated with the order.
         /// </summary>
-        [Required]
         [JsonPropertyName("hotel")]
         public HotelDto? Hotel { get; set; }
         
@@ -43,6 +41,19 @@ namespace HotelReservationSystem.DTOs
         [Required]
         [JsonPropertyName("hotelId")]
         public int HotelId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the room information associated with the order.
+        /// </summary>
+        [JsonPropertyName("room")]
+        public RoomDto? Room { get; set; }
+
+        /// <summary>
+        /// Gets or sets the room identifier.
+        /// </summary>
+        [Required]
+        [JsonPropertyName("roomId")]
+        public int RoomId { get; set; }
 
         /// <summary>
         /// Gets or sets the date when the order was placed.
@@ -75,6 +86,12 @@ namespace HotelReservationSystem.DTOs
         /// Gets or sets the full price of the reservation.
         /// </summary>
         [JsonPropertyName("fullPrice")]
-        public double FullPrice { get; set; }
+        public decimal FullPrice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the status of the order.
+        /// </summary>
+        [JsonPropertyName("status")]
+        public string Status { get; set; } = "Pending";
     }
 }
