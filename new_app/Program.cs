@@ -1,5 +1,6 @@
 using HotelReservationSystem.Data;
 using HotelReservationSystem.Models;
+using HotelReservationSystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
