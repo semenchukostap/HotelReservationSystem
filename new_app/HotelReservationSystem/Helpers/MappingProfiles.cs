@@ -1,6 +1,7 @@
 using AutoMapper;
 using HotelReservationSystem.DTOs;
 using HotelReservationSystem.Models;
+using System;
 
 namespace HotelReservationSystem.Helpers
 {
@@ -12,20 +13,16 @@ namespace HotelReservationSystem.Helpers
         public MappingProfiles()
         {
             // Hotel mappings
-            CreateMap<Hotel, HotelDto>();
-            CreateMap<HotelDto, Hotel>();
+            CreateMap<Hotel, HotelDto>().ReverseMap();
 
             // Country mappings
-            CreateMap<Country, CountryDto>();
-            CreateMap<CountryDto, Country>();
+            CreateMap<Country, CountryDto>().ReverseMap();
 
             // Customer mappings
-            CreateMap<Customer, CustomerDto>();
-            CreateMap<CustomerDto, Customer>();
+            CreateMap<Customer, CustomerDto>().ReverseMap();
 
             // Order mappings
-            CreateMap<Order, OrderDto>();
-            CreateMap<OrderDto, Order>();
+            CreateMap<Order, OrderDto>().ReverseMap();
             
             // NewOrder DTO mapping
             CreateMap<NewOrderDto, Order>()
@@ -41,7 +38,10 @@ namespace HotelReservationSystem.Helpers
             CreateMap<ApplicationUser, ApplicationUserDto>();
             CreateMap<ApplicationUserDto, ApplicationUser>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
-                .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore());
+                .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
+                .ForMember(dest => dest.ConcurrencyStamp, opt => opt.Ignore())
+                .ForMember(dest => dest.NormalizedEmail, opt => opt.Ignore())
+                .ForMember(dest => dest.NormalizedUserName, opt => opt.Ignore());
         }
     }
 }
