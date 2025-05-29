@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using new_app.Data;
 using new_app.Models;
+using new_app.Utilities;
 
 namespace new_app.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = RoleName.Admin)]
     public class CustomersController : Controller
     {
         private readonly ApplicationDbContext _context;
