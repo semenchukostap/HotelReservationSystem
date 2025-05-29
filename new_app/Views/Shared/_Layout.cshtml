@@ -10,7 +10,13 @@
     <meta property="og:title" content="@ViewData["Title"] - Book&Go" />
     <meta property="og:description" content="Book&Go - Your trusted hotel reservation system" />
     <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#343a40" />
     <meta name="application-version" content="1.0.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:site_name" content="Book&Go" />
     <title>@ViewData["Title"] - Book&Go</title>
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/datatables/jquery.dataTables.min.css" />
@@ -20,19 +26,23 @@
     <link rel="stylesheet" href="~/HotelReservationSystem.styles.css" asp-append-version="true" />
 </head>
 <body>
-    @if (Context.Request.Headers["X-Forwarded-Proto"] != "https" && !Context.Request.IsLocal())
-    {
-        <div class="alert alert-warning text-center mb-0" role="alert">
-            You are accessing this site over an insecure connection. Please switch to HTTPS for better security.
-        </div>
-    }
+    <div id="error-boundary">
+        @if (Context.Request.Headers["X-Forwarded-Proto"] != "https" && !Context.Request.IsLocal())
+        {
+            <div class="alert alert-warning alert-dismissible fade show text-center mb-0" role="alert">
+                You are accessing this site over an insecure connection. Please switch to HTTPS for better security.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
 
-    @if (Context.Request.Host.Value.Contains("localhost") || Context.Request.Host.Value.Contains("127.0.0.1"))
-    {
-        <div class="alert alert-info text-center mb-0" role="alert">
-            Development mode is active. Please do not use real credentials.
-        </div>
-    }
+        @if (Context.Request.Host.Value.Contains("localhost") || Context.Request.Host.Value.Contains("127.0.0.1"))
+        {
+            <div class="alert alert-info alert-dismissible fade show text-center mb-0" role="alert">
+                Development mode is active. Please do not use real credentials.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    </div>
 
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-inverse bg-dark border-bottom box-shadow mb-3">
@@ -67,26 +77,31 @@
     </header>
     <div class="container body-content">
         <main role="main" class="pb-3">
-            @try
-            {
-                @RenderBody()
-            }
-            catch (Exception ex)
-            {
-                <div class="alert alert-danger" role="alert">
-                    <h4 class="alert-heading">An error occurred!</h4>
-                    <p>We apologize for the inconvenience. Please try again later.</p>
-                    @if (Context.Request.Host.Value.Contains("localhost"))
-                    {
-                        <hr>
-                        <p class="mb-0">Error details: @ex.Message</p>
-                    }
-                </div>
-            }
+            <error-boundary>
+                @try
+                {
+                    @RenderBody()
+                }
+                catch (Exception ex)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">An error occurred!</h4>
+                        <p>We apologize for the inconvenience. Please try again later.</p>
+                        @if (Context.Request.Host.Value.Contains("localhost"))
+                        {
+                            <hr>
+                            <p class="mb-0">Error details: @ex.Message</p>
+                            <p class="mb-0">Stack trace: @ex.StackTrace</p>
+                        }
+                    </div>
+                }
+            </error-boundary>
         </main>
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Book&Go</p>
+        <footer class="footer mt-auto py-3">
+            <div class="container">
+                <p>&copy; @DateTime.Now.Year - Book&Go. All rights reserved.</p>
+            </div>
         </footer>
     </div>
 
@@ -97,5 +112,12 @@
     <script src="~/lib/toastr/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+            return false;
+        };
+    </script>
 </body>
 </html>
