@@ -14,7 +14,9 @@ public class HotelsController : Controller
     private readonly ApplicationDbContext _context;
     private readonly ILogger<HotelsController> _logger;
     
-    public HotelsController(ApplicationDbContext context, ILogger<HotelsController> logger)
+    public HotelsController(
+        ApplicationDbContext context,
+        ILogger<HotelsController> logger)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -25,15 +27,20 @@ public class HotelsController : Controller
     {
         try
         {
+            _logger.LogInformation("Accessing hotels index page");
             if (User.IsInRole(RoleNames.CanManageHotels))
+            {
+                _logger.LogDebug("User has management rights. Showing full list view");
                 return View("List");
+            }
 
+            _logger.LogDebug("User has read-only rights. Showing limited view");
             return View("ReadOnlyList");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while accessing the index page");
-            return StatusCode(500, "An unexpected error occurred");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
         }
     }
 
@@ -42,7 +49,8 @@ public class HotelsController : Controller
     {
         try
         {
-            var countries = await _context.Countries.ToListAsync();
+            _logger.LogInformation("Creating new hotel form");
+            var countries = await _context.Countries.AsNoTracking().ToListAsync();
 
             var viewModel = new HotelViewModel
             {
@@ -55,7 +63,7 @@ public class HotelsController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while creating new hotel form");
-            return StatusCode(500, "An unexpected error occurred");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
         }
     }
 
@@ -64,6 +72,7 @@ public class HotelsController : Controller
     {
         try
         {
+            _logger.LogInformation("Editing hotel with ID {HotelId}", id);
             var hotel = await _context.Hotels
                 .AsNoTracking()
                 .SingleOrDefaultAsync(h => h.Id == id);
@@ -77,7 +86,7 @@ public class HotelsController : Controller
             var viewModel = new HotelViewModel
             {
                 Hotel = hotel,
-                Countries = await _context.Countries.ToListAsync()
+                Countries = await _context.Countries.AsNoTracking().ToListAsync()
             };
 
             return View("Form", viewModel);
@@ -85,23 +94,24 @@ public class HotelsController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while editing hotel with ID {HotelId}", id);
-            return StatusCode(500, "An unexpected error occurred");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
         }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = RoleNames.CanManageHotels)]
-    public async Task<IActionResult> Save(Hotel hotel)
+    public async Task<IActionResult> Save([FromForm] Hotel hotel)
     {
         try
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Invalid model state when saving hotel");
                 var viewModel = new HotelViewModel
                 {
                     Hotel = hotel,
-                    Countries = await _context.Countries.ToListAsync()
+                    Countries = await _context.Countries.AsNoTracking().ToListAsync()
                 };
 
                 return View("Form", viewModel);
@@ -114,7 +124,13 @@ public class HotelsController : Controller
             }
             else
             {
-                var hotelInDb = await _context.Hotels.SingleAsync(c => c.Id == hotel.Id);
+                var hotelInDb = await _context.Hotels.FindAsync(hotel.Id);
+                if (hotelInDb == null)
+                {
+                    _logger.LogWarning("Hotel with ID {HotelId} not found during update", hotel.Id);
+                    return NotFound();
+                }
+
                 hotelInDb.Name = hotel.Name;
                 hotelInDb.City = hotel.City;
                 hotelInDb.CountryId = hotel.CountryId;
@@ -130,19 +146,19 @@ public class HotelsController : Controller
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error occurred while saving hotel");
+            _logger.LogError(ex, "Database error occurred while saving hotel");
             ModelState.AddModelError("", "Unable to save changes. Please try again.");
             var viewModel = new HotelViewModel
             {
                 Hotel = hotel,
-                Countries = await _context.Countries.ToListAsync()
+                Countries = await _context.Countries.AsNoTracking().ToListAsync()
             };
             return View("Form", viewModel);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error occurred while saving hotel");
-            return StatusCode(500, "An unexpected error occurred");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
         }
     }
 
@@ -151,24 +167,26 @@ public class HotelsController : Controller
     {
         try
         {
+            _logger.LogInformation("Creating new country form");
             return View("NewCountryForm", new Country());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while creating new country form");
-            return StatusCode(500, "An unexpected error occurred");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
         }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = RoleNames.CanManageHotels)]
-    public async Task<IActionResult> SaveCountry(Country country)
+    public async Task<IActionResult> SaveCountry([FromForm] Country country)
     {
         try
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Invalid model state when saving country");
                 return View("NewCountryForm", country);
             }
 
@@ -179,7 +197,13 @@ public class HotelsController : Controller
             }
             else
             {
-                var countryInDb = await _context.Countries.SingleAsync(c => c.Id == country.Id);
+                var countryInDb = await _context.Countries.FindAsync(country.Id);
+                if (countryInDb == null)
+                {
+                    _logger.LogWarning("Country with ID {CountryId} not found during update", country.Id);
+                    return NotFound();
+                }
+
                 countryInDb.Name = country.Name;
                 _logger.LogInformation("Updated country with ID {CountryId}", country.Id);
             }
@@ -190,14 +214,14 @@ public class HotelsController : Controller
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error occurred while saving country");
+            _logger.LogError(ex, "Database error occurred while saving country");
             ModelState.AddModelError("", "Unable to save changes. Please try again.");
             return View("NewCountryForm", country);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error occurred while saving country");
-            return StatusCode(500, "An unexpected error occurred");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
         }
     }
 }
