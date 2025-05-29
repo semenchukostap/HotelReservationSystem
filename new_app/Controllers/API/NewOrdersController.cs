@@ -10,7 +10,7 @@ namespace new_app.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class NewOrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -30,11 +30,11 @@ namespace new_app.Controllers.API
         {
             var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == orderDto.CustomerId);
             if (customer == null)
-                return BadRequest("Invalid customer ID.");
+                return NotFound("Customer not found");
 
             var hotel = await _context.Hotels.SingleOrDefaultAsync(h => h.Id == orderDto.HotelId);
             if (hotel == null)
-                return BadRequest("Invalid hotel ID.");
+                return NotFound("Hotel not found");
 
             var order = _mapper.Map<Order>(orderDto);
             order.Customer = customer;
