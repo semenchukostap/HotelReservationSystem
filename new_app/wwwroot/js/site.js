@@ -1,34 +1,65 @@
+// Modern JavaScript Utilities
+export class ValidationError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'ValidationError';
+    }
+}
+
 // Form validation module
-const FormValidation = {
+export const FormValidation = {
     init() {
-        document.querySelectorAll('form[data-validate="true"]').forEach(form => {
-            form.addEventListener('submit', this.handleSubmit);
+        document.addEventListener('submit', (event) => {
+            if (event.target.matches('form[data-validate="true"]')) {
+                this.handleSubmit(event);
+            }
         });
     },
 
     handleSubmit(event) {
-        const form = event.currentTarget;
-        if (!form.checkValidity()) {
+        const form = event.target;
+        const isValid = this.validateForm(form);
+
+        if (!isValid) {
             event.preventDefault();
             event.stopPropagation();
         }
+
         form.classList.add('was-validated');
     },
 
+    validateForm(form) {
+        const inputs = Array.from(form.elements);
+        return inputs.every(input => this.validateInput(input));
+    },
+
+    validateInput(input) {
+        if (!input.checkValidity()) {
+            const errorMessage = input.validationMessage;
+            ToastNotification.show(errorMessage, 'danger');
+            return false;
+        }
+        return true;
+    },
+
     resetForm(formElement) {
+        if (!(formElement instanceof HTMLFormElement)) {
+            throw new ValidationError('Invalid form element');
+        }
         formElement.classList.remove('was-validated');
         formElement.reset();
     }
 };
 
 // API service module
-const ApiService = {
+export const ApiService = {
     async fetchData(url, options = {}) {
         try {
             const defaultOptions = {
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
                 },
                 credentials: 'same-origin'
             };
@@ -39,12 +70,14 @@ const ApiService = {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            const isJson = response.headers.get('content-type')?.includes('application/json');
+            const contentType = response.headers.get('content-type');
+            const isJson = contentType?.includes('application/json');
             const data = isJson ? await response.json() : await response.text();
             
             return { success: true, data };
         } catch (error) {
             console.error('API Error:', error);
+            ToastNotification.show(error.message, 'danger');
             return { success: false, error: error.message };
         }
     },
@@ -75,39 +108,43 @@ const ApiService = {
 };
 
 // Modal handler module
-const ModalHandler = {
+export const ModalHandler = {
     init() {
-        this.setupModalEvents();
-    },
-
-    setupModalEvents() {
-        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
-            button.addEventListener('click', this.handleModalButton);
+        document.addEventListener('click', (event) => {
+            if (event.target.matches('[data-bs-toggle="modal"]')) {
+                this.handleModalButton(event);
+            }
         });
     },
 
     async handleModalButton(event) {
-        const button = event.currentTarget;
+        const button = event.target;
         const target = button.dataset.bsTarget;
         const url = button.dataset.url;
 
         if (url) {
             try {
                 const { success, data } = await ApiService.get(url);
-                if (success) {
+                if (success && target) {
                     const modal = document.querySelector(target);
-                    modal.querySelector('.modal-content').innerHTML = data;
+                    if (modal) {
+                        const content = modal.querySelector('.modal-content');
+                        if (content) {
+                            content.innerHTML = data;
+                            new bootstrap.Modal(modal).show();
+                        }
+                    }
                 }
             } catch (error) {
                 console.error('Modal loading error:', error);
-                showToast('Error loading modal content', 'error');
+                ToastNotification.show('Error loading modal content', 'danger');
             }
         }
     }
 };
 
 // Toast notification module
-const ToastNotification = {
+export const ToastNotification = {
     init() {
         this.container = document.getElementById('toast-container');
         if (!this.container) {
@@ -137,7 +174,11 @@ const ToastNotification = {
         `;
 
         this.container.appendChild(toastElement);
-        const toast = new bootstrap.Toast(toastElement);
+        const toast = new bootstrap.Toast(toastElement, {
+            animation: true,
+            autohide: true,
+            delay: 3000
+        });
         toast.show();
 
         toastElement.addEventListener('hidden.bs.toast', () => {
@@ -147,10 +188,16 @@ const ToastNotification = {
 };
 
 // DataTable helper module
-const DataTableHelper = {
+export const DataTableHelper = {
     init(tableId, options = {}) {
+        if (typeof tableId !== 'string') {
+            throw new ValidationError('Table ID must be a string');
+        }
+
         const defaultOptions = {
             responsive: true,
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf', 'print'],
             language: {
                 search: 'Search:',
                 lengthMenu: 'Show _MENU_ entries',
@@ -164,42 +211,47 @@ const DataTableHelper = {
             }
         };
 
-        return new DataTable(`#${tableId}`, { ...defaultOptions, ...options });
+        const table = document.getElementById(tableId);
+        if (!table) {
+            throw new ValidationError(`Table with ID "${tableId}" not found`);
+        }
+
+        return new DataTable(table, { ...defaultOptions, ...options });
     }
 };
 
 // URL helper module
-const UrlHelper = {
+export const UrlHelper = {
     getQueryParams() {
         return Object.fromEntries(new URLSearchParams(window.location.search));
     },
 
     updateQueryParam(key, value) {
+        if (typeof key !== 'string') {
+            throw new ValidationError('Query parameter key must be a string');
+        }
         const params = new URLSearchParams(window.location.search);
         params.set(key, value);
         window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+    },
+
+    buildUrl(base, params = {}) {
+        const url = new URL(base, window.location.origin);
+        Object.entries(params).forEach(([key, value]) => {
+            url.searchParams.append(key, value);
+        });
+        return url.toString();
     }
 };
 
 // Document ready handler
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize modules
     FormValidation.init();
     ModalHandler.init();
     ToastNotification.init();
-
-    // Setup global AJAX headers for CSRF protection
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-    if (csrfToken) {
-        document.addEventListener('fetch', (event) => {
-            if (event.request.method !== 'GET') {
-                event.request.headers.set('X-CSRF-TOKEN', csrfToken);
-            }
-        });
-    }
 });
 
-// Export modules for use in other scripts
+// Export modules for legacy support
 window.App = {
     ApiService,
     FormValidation,
