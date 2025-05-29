@@ -8,7 +8,7 @@ namespace HotelReservationSystem.DTOs
         
         [Required]
         [MaxLength(255)]
-        public required string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         
         [Required]
         public int CountryId { get; set; }
@@ -17,7 +17,7 @@ namespace HotelReservationSystem.DTOs
         
         [Required]
         [MaxLength(50)]
-        public required string City { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
         
         [Required]
         [Range(1, 5)]
