@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Hotel Reservation System</h1>
+    <p>A modern .NET 8 application for managing hotel reservations.</p>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Customers</h5>
+            </div>
+            <div class="card-body">
+                <p>Manage customer information and view their reservations.</p>
+                <a asp-controller="Customers" asp-action="Index" class="btn btn-outline-primary">Go to Customers</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5>Hotels</h5>
+            </div>
+            <div class="card-body">
+                <p>Browse and manage hotels, their locations, and pricing.</p>
+                <a asp-controller="Hotels" asp-action="Index" class="btn btn-outline-success">Go to Hotels</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5>Orders</h5>
+            </div>
+            <div class="card-body">
+                <p>View and manage reservation orders for customers.</p>
+                <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-info">Go to Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
