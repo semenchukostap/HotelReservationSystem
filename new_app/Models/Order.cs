@@ -1,16 +1,17 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace new_app.Models
+namespace HotelReservationSystem.Models
 {
     public class Order
     {
         public int Id { get; set; }
 
         [Required]
-        public Customer? Customer { get; set; }
+        public required Customer Customer { get; set; }
         
         [Required]
-        public Hotel? Hotel { get; set; }
+        public required Hotel Hotel { get; set; }
 
         [Required]
         public DateTime DateOrdered { get; set; }
