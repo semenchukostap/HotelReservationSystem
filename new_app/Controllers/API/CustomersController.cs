@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using new_app.Data;
-using new_app.Models;
+using HotelReservationSystem.Data;
+using HotelReservationSystem.Models;
 
-namespace new_app.Controllers.API
+namespace HotelReservationSystem.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = RoleName.Admin)]
     public class CustomersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
