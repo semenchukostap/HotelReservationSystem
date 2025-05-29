@@ -9,5 +9,10 @@ namespace HotelReservationSystem.Models
         /// Role that grants permission to manage hotels, customers, and orders
         /// </summary>
         public const string CanManageHotels = "CanManageHotels";
+
+        /// <summary>
+        /// Role that grants administrative privileges across the entire application
+        /// </summary>
+        public const string Admin = "Admin";
     }
 }
