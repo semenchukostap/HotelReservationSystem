@@ -54,7 +54,14 @@ namespace new_app.Controllers
 
             if (id == null)
             {
-                viewModel.Hotel = new Hotel();
+                // Initialize empty hotel properties
+                viewModel.Id = 0;
+                viewModel.Name = string.Empty;
+                viewModel.City = string.Empty;
+                viewModel.CountryId = 0;
+                viewModel.IsAllInclusive = false;
+                viewModel.PricePerNight = 0;
+                viewModel.Stars = 0;
                 return View(viewModel);
             }
             
@@ -63,7 +70,14 @@ namespace new_app.Controllers
             if (hotel == null)
                 return NotFound();
             
-            viewModel.Hotel = hotel;
+            // Map hotel properties to viewModel
+            viewModel.Id = hotel.Id;
+            viewModel.Name = hotel.Name;
+            viewModel.City = hotel.City;
+            viewModel.CountryId = hotel.CountryId;
+            viewModel.IsAllInclusive = hotel.IsAllInclusive;
+            viewModel.PricePerNight = hotel.PricePerNight;
+            viewModel.Stars = hotel.Stars;
             
             return View(viewModel);
         }
@@ -75,7 +89,13 @@ namespace new_app.Controllers
 
             var viewModel = new HotelViewModel()
             {
-                Hotel = new Hotel(),
+                Id = 0,
+                Name = string.Empty,
+                City = string.Empty,
+                CountryId = 0,
+                IsAllInclusive = false,
+                PricePerNight = 0,
+                Stars = 0,
                 Countries = countries
             };
 
@@ -92,7 +112,13 @@ namespace new_app.Controllers
 
             var viewModel = new HotelViewModel()
             {
-                Hotel = hotel,
+                Id = hotel.Id,
+                Name = hotel.Name,
+                City = hotel.City,
+                CountryId = hotel.CountryId,
+                IsAllInclusive = hotel.IsAllInclusive,
+                PricePerNight = hotel.PricePerNight,
+                Stars = hotel.Stars,
                 Countries = await _context.Countries.ToListAsync()
             };
 
@@ -102,18 +128,24 @@ namespace new_app.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = RoleName.Admin)]
-        public async Task<IActionResult> Save(Hotel hotel)
+        public async Task<IActionResult> Save(HotelViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
-                var viewModel = new HotelViewModel()
-                {
-                    Hotel = hotel,
-                    Countries = await _context.Countries.ToListAsync()
-                };
-
+                viewModel.Countries = await _context.Countries.ToListAsync();
                 return View("Form", viewModel);
             }
+
+            var hotel = new Hotel
+            {
+                Id = viewModel.Id,
+                Name = viewModel.Name,
+                City = viewModel.City,
+                CountryId = viewModel.CountryId,
+                IsAllInclusive = viewModel.IsAllInclusive,
+                PricePerNight = viewModel.PricePerNight,
+                Stars = viewModel.Stars
+            };
 
             if (hotel.Id == 0)
                 _context.Hotels.Add(hotel);
