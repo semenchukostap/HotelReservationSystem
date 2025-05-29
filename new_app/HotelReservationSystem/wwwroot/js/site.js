@@ -1,4 +1,4 @@
-﻿// Main site JavaScript file that uses Bootstrap 5.3.2 components
+// Main site JavaScript file that uses Bootstrap 5.3.2 components
 
 // Enable tooltips and popovers (Bootstrap features)
 document.addEventListener('DOMContentLoaded', () => {
@@ -49,6 +49,19 @@ $(document).ready(function () {
         });
     });
 
+    // Apply custom DataTables to reservation tables
+    $('#reservationsTable').DataTable({
+        responsive: true,
+        order: [[0, 'desc']],
+        columnDefs: [
+            { type: 'date', targets: [1, 2] }
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'excel', 'pdf', 'print'
+        ]
+    });
+
     // Handle Bootstrap modal events
     $('.modal').on('show.bs.modal', function (e) {
         // Additional custom code here
@@ -85,6 +98,78 @@ $(document).ready(function () {
             }
         });
     });
+
+    // Initialize date range picker for reservation forms
+    if (typeof daterangepicker !== 'undefined') {
+        $('#reservationDateRange').daterangepicker({
+            opens: 'left',
+            locale: {
+                format: 'MM/DD/YYYY',
+                separator: ' - '
+            },
+            minDate: moment()
+        });
+    }
+
+    // Initialize Typeahead for guest search
+    if (typeof Bloodhound !== 'undefined') {
+        var guests = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: '/api/guests/search?q=%QUERY',
+                wildcard: '%QUERY'
+            }
+        });
+
+        $('#guestSearch').typeahead(null, {
+            name: 'guests',
+            display: 'name',
+            source: guests,
+            templates: {
+                suggestion: function(data) {
+                    return '<div>' + data.name + ' - ' + data.email + '</div>';
+                }
+            }
+        }).on('typeahead:selected', function(e, suggestion) {
+            $('#guestId').val(suggestion.id);
+        });
+    }
+
+    // Initialize form validation
+    if (typeof $.validator !== 'undefined') {
+        $.validator.setDefaults({
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+        // Reservation form validation
+        $("#reservationForm").validate({
+            rules: {
+                guestName: "required",
+                email: {
+                    required: true,
+                    email: true
+                },
+                phone: "required",
+                roomType: "required",
+                guests: {
+                    required: true,
+                    digits: true,
+                    min: 1
+                }
+            }
+        });
+    }
 });
 
 // Handle form submissions with AJAX
@@ -121,5 +206,88 @@ function handleAjaxForm(formSelector, successCallback, errorCallback) {
                 }
             }
         });
+    });
+}
+
+// Room availability checking
+function checkRoomAvailability(startDate, endDate, roomType, callback) {
+    $.ajax({
+        url: '/api/rooms/checkAvailability',
+        method: 'GET',
+        data: {
+            startDate: startDate,
+            endDate: endDate,
+            roomType: roomType
+        },
+        success: function(response) {
+            if (typeof callback === 'function') {
+                callback(response);
+            } else {
+                if (response.available) {
+                    toastr.success('Rooms available for the selected dates.');
+                } else {
+                    toastr.warning('No rooms available for the selected dates.');
+                }
+            }
+        },
+        error: function() {
+            toastr.error('Error checking room availability.');
+        }
+    });
+}
+
+// Calculate reservation cost
+function calculateReservationCost() {
+    const roomType = $('#roomType').val();
+    const dateRange = $('#reservationDateRange').val();
+    const guests = $('#guests').val();
+    
+    if (roomType && dateRange && guests) {
+        const dates = dateRange.split(' - ');
+        if (dates.length === 2) {
+            $.ajax({
+                url: '/api/reservations/calculateCost',
+                method: 'GET',
+                data: {
+                    roomType: roomType,
+                    startDate: dates[0],
+                    endDate: dates[1],
+                    guests: guests
+                },
+                success: function(response) {
+                    $('#totalCost').val(response.totalCost);
+                    $('#costBreakdown').html(response.breakdown);
+                },
+                error: function() {
+                    toastr.error('Error calculating reservation cost.');
+                }
+            });
+        }
+    }
+}
+
+// Create a reservation
+function createReservation(formData, successCallback, errorCallback) {
+    $.ajax({
+        url: '/api/reservations',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (typeof successCallback === 'function') {
+                successCallback(response);
+            } else {
+                toastr.success('Reservation created successfully!');
+                setTimeout(() => window.location.href = '/reservations', 1500);
+            }
+        },
+        error: function(xhr) {
+            if (typeof errorCallback === 'function') {
+                errorCallback(xhr);
+            } else {
+                toastr.error('Failed to create reservation.');
+            }
+        }
     });
 }
