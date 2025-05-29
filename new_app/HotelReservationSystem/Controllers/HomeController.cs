@@ -36,6 +36,26 @@ namespace HotelReservationSystem.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult HandleError(int? statusCode = null)
+        {
+            var errorViewModel = new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+
+            if (statusCode.HasValue)
+            {
+                _logger.LogError($"Error occurred with status code: {statusCode}");
+            }
+            else
+            {
+                _logger.LogError("An unexpected error occurred");
+            }
+
+            return View("Error", errorViewModel);
+        }
     }
 
     public class ErrorViewModel
