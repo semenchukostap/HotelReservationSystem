@@ -6,7 +6,7 @@ using new_app.Models;
 
 namespace new_app.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = RoleName.Admin)]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
