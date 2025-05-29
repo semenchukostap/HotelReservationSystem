@@ -1,10 +1,35 @@
-using new_app.Models;
+using HotelReservationSystem.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace new_app.ViewModels
+namespace HotelReservationSystem.ViewModels
 {
     public class HotelViewModel
     {
-        public Hotel? Hotel { get; set; }
-        public IEnumerable<Country> Countries { get; set; } = new List<Country>();
+        public int? Id { get; set; }
+
+        [Required]
+        [MaxLength(255)]
+        public string Name { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "Country")]
+        public int CountryId { get; set; }
+
+        public IEnumerable<Country>? Countries { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string City { get; set; } = string.Empty;
+
+        [Required]
+        [Range(1,5)]
+        public int Stars { get; set; }
+
+        [Required]
+        [Range(1, 1000)]
+        public double PricePerNight { get; set; }
+
+        [Required]
+        public bool IsAllInclusive { get; set; }
     }
 }
