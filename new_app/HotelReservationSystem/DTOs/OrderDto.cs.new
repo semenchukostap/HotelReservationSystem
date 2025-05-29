@@ -1,0 +1,87 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace HotelReservationSystem.DTOs
+{
+    /// <summary>
+    /// Data transfer object for Order entity to be used in API operations.
+    /// Represents a reservation order in the hotel reservation system.
+    /// </summary>
+    public class OrderDto
+    {
+        /// <summary>
+        /// The unique identifier for the order
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Customer ID foreign key
+        /// </summary>
+        [Required]
+        public int CustomerId { get; set; }
+
+        /// <summary>
+        /// Associated customer data
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public CustomerDto? Customer { get; set; }
+
+        /// <summary>
+        /// Hotel ID foreign key
+        /// </summary>
+        [Required]
+        public int HotelId { get; set; }
+
+        /// <summary>
+        /// Associated hotel data
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public HotelDto? Hotel { get; set; }
+
+        /// <summary>
+        /// Date when the order was created
+        /// </summary>
+        [Required]
+        public DateTime DateOrdered { get; set; } = DateTime.Now;
+
+        /// <summary>
+        /// Start date of the hotel stay
+        /// </summary>
+        [Required]
+        public DateTime StartDate { get; set; }
+
+        /// <summary>
+        /// End date of the hotel stay
+        /// </summary>
+        [Required]
+        public DateTime EndDate { get; set; }
+
+        /// <summary>
+        /// Number of days for the stay (calculated from StartDate and EndDate)
+        /// </summary>
+        public int NumberOfDays { get; set; }
+
+        /// <summary>
+        /// Full price of the stay (calculated from hotel price per night and number of days)
+        /// </summary>
+        public double FullPrice { get; set; }
+        
+        /// <summary>
+        /// Calculates the number of days between start and end date
+        /// </summary>
+        public void CalculateNumberOfDays()
+        {
+            NumberOfDays = (int)(EndDate - StartDate).TotalDays;
+        }
+
+        /// <summary>
+        /// Calculates the full price based on hotel price per night and number of days
+        /// </summary>
+        /// <param name="pricePerNight">The hotel's price per night</param>
+        public void CalculateFullPrice(double pricePerNight)
+        {
+            FullPrice = Math.Round(pricePerNight * NumberOfDays, 2);
+        }
+    }
+}
