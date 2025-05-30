@@ -9,7 +9,7 @@ public class Customer
     
     [Required]
     [MaxLength(255)]
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     public DateTime? Birthdate { get; set; }
 }
