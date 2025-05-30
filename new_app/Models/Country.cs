@@ -8,10 +8,17 @@ namespace HotelReservationSystem.Models
     /// </summary>
     public class Country
     {
+        /// <summary>
+        /// Gets or sets the unique identifier for the country.
+        /// </summary>
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(255)]
+        /// <summary>
+        /// Gets or sets the name of the country.
+        /// Must not be empty and cannot exceed 255 characters.
+        /// </summary>
+        [Required(ErrorMessage = "Country name is required")]
+        [StringLength(255, ErrorMessage = "Country name cannot exceed 255 characters")]
         [Display(Name = "Country Name")]
         public string Name { get; set; } = string.Empty;
     }
