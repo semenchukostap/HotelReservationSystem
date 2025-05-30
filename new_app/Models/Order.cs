@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelReservationSystem.Models
 {
     public class Order
