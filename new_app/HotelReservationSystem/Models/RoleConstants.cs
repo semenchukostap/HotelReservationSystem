@@ -1,0 +1,8 @@
+namespace HotelReservationSystem.Models;
+
+public static class RoleConstants
+{
+    public const string Admin = "Admin";
+    public const string HotelManager = "HotelManager";
+    public const string CanManageHotels = "CanManageHotels";
+}
