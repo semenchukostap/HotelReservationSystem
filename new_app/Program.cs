@@ -8,6 +8,12 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Set default global JSON serialization options
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.WriteIndented = true;
+    options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+});
+
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? 
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -57,12 +63,27 @@ builder.Services.AddAutoMapper(cfg => {
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<ISmsSender, SmsSender>();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
 builder.Services.AddRazorPages();
 
 // Add API controllers with routing - migrated from WebApiConfig.cs
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Add typed HTTP clients for API communication if needed
+builder.Services.AddHttpClient();
+
+// Add output caching
+builder.Services.AddOutputCache(options =>
+{
+    options.AddBasePolicy(builder => 
+        builder.Cache());
+});
 
 // Add ApplicationInsights
 builder.Services.AddApplicationInsightsTelemetry();
@@ -96,6 +117,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseOutputCache();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -105,6 +127,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+// Map minimal API endpoints if needed
+app.MapGet("/api/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow }))
+    .WithName("HealthCheck")
+    .WithOpenApi();
 
 // Initialize and seed the database
 if (app.Environment.IsDevelopment())
@@ -130,4 +157,11 @@ if (app.Environment.IsDevelopment())
     }
 }
 
+// Enable problem details for error handling
+app.UseExceptionHandler(options => { });
+app.UseStatusCodePages();
+
 app.Run();
+
+// Make the Program class public for testing
+public partial class Program { }
