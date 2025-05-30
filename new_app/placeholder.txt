@@ -1,0 +1,1 @@
+Placeholder file to ensure the new_app directory exists.
