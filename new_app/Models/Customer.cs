@@ -1,3 +1,6 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelReservationSystem.Models
 {
     public class Customer
