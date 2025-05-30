@@ -8,6 +8,7 @@ namespace HotelReservationSystem.Models
 
         [Required]
         [StringLength(255)]
+        [Display(Name = "Country Name")]
         public string Name { get; set; } = string.Empty;
     }
 }
