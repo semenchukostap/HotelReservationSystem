@@ -48,6 +48,13 @@
             </form>
         </section>
     </div>
+    <div class="col-md-4">
+        <section id="socialLoginForm">
+            @* External logins will be implemented in a separate task 
+            <partial name="_ExternalLoginsListPartial" model="new ExternalLoginListViewModel { ReturnUrl = ViewData["ReturnUrl"] as string }" />
+            *@
+        </section>
+    </div>
 </div>
 
 @section Scripts {
