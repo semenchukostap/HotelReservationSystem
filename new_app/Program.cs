@@ -39,6 +39,9 @@ builder.Services.AddAuthentication()
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
 
+// Add Authorization services
+builder.Services.AddAuthorization();
+
 // Add AutoMapper service
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
