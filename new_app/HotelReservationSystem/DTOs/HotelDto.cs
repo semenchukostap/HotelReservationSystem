@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace HotelReservationSystem.DTOs;
+
+using System.ComponentModel.DataAnnotations;
 
 public class HotelDto
 {
