@@ -1,14 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.8.34322.80
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservationSystem.Web", "HotelReservationSystem.Web\HotelReservationSystem.Web.csproj", "{B2A54380-E22E-42F5-9316-98A44FBF0DAE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservationSystem.Core", "HotelReservationSystem.Core\HotelReservationSystem.Core.csproj", "{7DE60B10-2C3D-4BAC-82D9-15391853D0DA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservationSystem.Data", "HotelReservationSystem.Data\HotelReservationSystem.Data.csproj", "{86E0CDA1-BDAA-4637-B0C5-F39AFBF3114F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelReservationSystem.Services", "HotelReservationSystem.Services\HotelReservationSystem.Services.csproj", "{E52AE25D-E0F3-4806-A2C0-772F85BAC375}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelReservationSystem", "new_app\HotelReservationSystem\HotelReservationSystem.csproj", "{8D3274F1-4A5C-4C79-9D1A-BB113A5F465E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,24 +13,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B2A54380-E22E-42F5-9316-98A44FBF0DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2A54380-E22E-42F5-9316-98A44FBF0DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2A54380-E22E-42F5-9316-98A44FBF0DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2A54380-E22E-42F5-9316-98A44FBF0DAE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7DE60B10-2C3D-4BAC-82D9-15391853D0DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7DE60B10-2C3D-4BAC-82D9-15391853D0DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7DE60B10-2C3D-4BAC-82D9-15391853D0DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7DE60B10-2C3D-4BAC-82D9-15391853D0DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86E0CDA1-BDAA-4637-B0C5-F39AFBF3114F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{86E0CDA1-BDAA-4637-B0C5-F39AFBF3114F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86E0CDA1-BDAA-4637-B0C5-F39AFBF3114F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{86E0CDA1-BDAA-4637-B0C5-F39AFBF3114F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E52AE25D-E0F3-4806-A2C0-772F85BAC375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E52AE25D-E0F3-4806-A2C0-772F85BAC375}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E52AE25D-E0F3-4806-A2C0-772F85BAC375}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E52AE25D-E0F3-4806-A2C0-772F85BAC375}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D3274F1-4A5C-4C79-9D1A-BB113A5F465E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D3274F1-4A5C-4C79-9D1A-BB113A5F465E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D3274F1-4A5C-4C79-9D1A-BB113A5F465E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D3274F1-4A5C-4C79-9D1A-BB113A5F465E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F2E5F80C-3C2E-4813-9B4E-28D71B79E41C}
+		SolutionGuid = {C69D6938-D23C-4F72-8D0C-125CC1003A4D}
 	EndGlobalSection
 EndGlobal
