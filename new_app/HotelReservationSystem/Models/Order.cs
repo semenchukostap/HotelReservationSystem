@@ -1,25 +1,18 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace HotelReservationSystem.Models;
 
 public class Order
 {
     public int Id { get; set; }
 
-    [Required]
-    public Customer Customer { get; set; } = null!;
+    public required Customer Customer { get; set; } = null!;
     
-    [Required]
-    public Hotel Hotel { get; set; } = null!;
+    public required Hotel Hotel { get; set; } = null!;
 
-    [Required]
-    public DateTime DateOrdered { get; set; }
+    public required DateTime DateOrdered { get; set; }
 
-    [Required]
-    public DateTime StartDate { get; set; }
+    public required DateTime StartDate { get; set; }
 
-    [Required]
-    public DateTime EndDate { get; set; }
+    public required DateTime EndDate { get; set; }
 
     public int NumberOfDays { get; set; }
 
