@@ -5,6 +5,7 @@ using HotelReservationSystem.Mappings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureHttpJsonOptions(options => {
     options.SerializerOptions.WriteIndented = true;
     options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
 // Add services to the container.
@@ -19,13 +21,20 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sqlServerOptions =>
+        sqlServerOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null)));
 
 builder.Services.AddDatabaseDeveloperPageExceptions();
 
 // Configure identity services - migrated from IdentityConfig.cs and Startup.Auth.cs
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
     options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
+    
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
@@ -36,22 +45,35 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
+    
+    // User settings
+    options.User.RequireUniqueEmail = true;
 })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 // Add Authentication services (migrated from Startup.Auth.cs)
-builder.Services.AddAuthentication()
-    .AddCookie(options => {
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/AccessDenied";
-    });
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+.AddCookie(IdentityConstants.ApplicationScheme, options => {
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromDays(14);
+    options.SlidingExpiration = true;
+});
 
 // Configure authorization policies
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("CanManageHotels", policy =>
         policy.RequireRole(RoleName.CanManageHotels));
+    
+    options.AddPolicy("RequireAdministratorRole", policy =>
+        policy.RequireRole(RoleName.Administrator));
 });
 
 // Add AutoMapper - migrated from MappingProfile.cs in App_Start
@@ -63,30 +85,60 @@ builder.Services.AddAutoMapper(cfg => {
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<ISmsSender, SmsSender>();
 
-builder.Services.AddControllersWithViews()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-        options.JsonSerializerOptions.WriteIndented = true;
-    });
+// Add custom application services
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IHotelService, HotelService>();
+
+builder.Services.AddControllersWithViews(options => {
+    // Add global filters if needed
+    // options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.WriteIndented = true;
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
+
 builder.Services.AddRazorPages();
 
 // Add API controllers with routing - migrated from WebApiConfig.cs
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => {
+    options.SwaggerDoc("v1", new() { Title = "Hotel Reservation API", Version = "v1" });
+});
 
 // Add typed HTTP clients for API communication if needed
 builder.Services.AddHttpClient();
+
+// Add session state
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options => {
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 // Add output caching
 builder.Services.AddOutputCache(options =>
 {
     options.AddBasePolicy(builder => 
-        builder.Cache());
+        builder.Cache()
+        .Expire(TimeSpan.FromMinutes(10))
+    );
 });
 
 // Add ApplicationInsights
 builder.Services.AddApplicationInsightsTelemetry();
+
+// Add CORS policy
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(policy => {
+        policy.WithOrigins("https://localhost:44349")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 // Configure HttpsRedirection using same port as original app
 builder.Services.AddHttpsRedirection(options =>
@@ -104,11 +156,29 @@ if (app.Environment.IsDevelopment())
     
     // Add Swagger in development environment
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options => {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel Reservation API v1");
+    });
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler(errorApp => {
+        errorApp.Run(async context => {
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "text/html";
+            
+            var exceptionHandlerPathFeature = 
+                context.Features.Get<IExceptionHandlerPathFeature>();
+            
+            // Log error
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(exceptionHandlerPathFeature?.Error, 
+                "An unhandled exception occurred while processing the request");
+                
+            await context.Response.WriteAsync("<html><body><h2>Error: An unexpected error occurred</h2></body></html>");
+        });
+    });
+    
     // The default HSTS value is 30 days.
     app.UseHsts();
 }
@@ -116,7 +186,9 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseCors();
 app.UseRouting();
+app.UseSession();
 app.UseOutputCache();
 
 app.UseAuthentication();
@@ -124,14 +196,25 @@ app.UseAuthorization();
 
 // Define routes from RouteConfig.cs
 app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
+
+// Map API routes - migrated from WebApiConfig.cs
+app.MapControllerRoute(
+    name: "api",
+    pattern: "api/{controller}/{id?}");
 
 // Map minimal API endpoints if needed
 app.MapGet("/api/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow }))
     .WithName("HealthCheck")
-    .WithOpenApi();
+    .WithOpenApi()
+    .CacheOutput(policy => policy.Expire(TimeSpan.FromMinutes(5)));
 
 // Initialize and seed the database
 if (app.Environment.IsDevelopment())
@@ -158,8 +241,17 @@ if (app.Environment.IsDevelopment())
 }
 
 // Enable problem details for error handling
-app.UseExceptionHandler(options => { });
-app.UseStatusCodePages();
+app.UseStatusCodePages(async statusCodeContext => {
+    // Log 404s and other status codes
+    if (statusCodeContext.HttpContext.Response.StatusCode == 404)
+    {
+        var logger = app.Services.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning("404 error occurred for path: {Path}", statusCodeContext.HttpContext.Request.Path);
+    }
+    
+    await statusCodeContext.HttpContext.Response.WriteAsync(
+        $"Status Code: {statusCodeContext.HttpContext.Response.StatusCode}");
+});
 
 app.Run();
 
