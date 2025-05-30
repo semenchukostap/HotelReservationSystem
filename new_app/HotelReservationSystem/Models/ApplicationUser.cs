@@ -7,5 +7,15 @@ public class ApplicationUser : IdentityUser
 {
     [Required]
     [MaxLength(20)]
-    public string Phone { get; set; } = string.Empty;
+    public required string Phone { get; set; } = string.Empty;
+    
+    [MaxLength(100)]
+    public string? FirstName { get; set; }
+    
+    [MaxLength(100)]
+    public string? LastName { get; set; }
+    
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    
+    public bool IsActive { get; set; } = true;
 }
