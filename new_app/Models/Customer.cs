@@ -1,16 +1,15 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace HotelReservationSystem.Models
-{
-    public class Customer
-    {
-        public int Id { get; set; }
-        
-        [Required]
-        [MaxLength(255)]
-        public string Name { get; set; } = string.Empty;
+namespace HotelReservationSystem.Models;
 
-        public DateTime? Birthdate { get; set; }
-    }
+public class Customer
+{
+    public int Id { get; set; }
+    
+    [Required]
+    [MaxLength(255)]
+    public required string Name { get; set; }
+
+    public DateTime? Birthdate { get; set; }
 }
