@@ -1,0 +1,10 @@
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Threading.Tasks;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using HotelReservationSystem.Models;
+global using HotelReservationSystem.ViewModels;
+global using HotelReservationSystem.Data;
+global using System.ComponentModel.DataAnnotations;
