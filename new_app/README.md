@@ -41,4 +41,29 @@ We're following Microsoft's recommended approach for migrating ASP.NET MVC to AS
 
 ## Migration Status
 
+### Completed Items
+- Basic project structure migration from ASP.NET MVC to ASP.NET Core
+- Database context migration to Entity Framework Core 8
+- Core domain models migration
+- Authentication framework migration to ASP.NET Core Identity
+- Identity UI integration, including `_LoginPartial.cshtml` view component
+- Configuration system migration to use appsettings.json
+- Basic routing setup with endpoint routing
+
+### In Progress
+- Controller migration
+- View migration (using new Tag Helpers)
+- JavaScript and CSS asset management
+- API endpoints
+- Service layer implementation
+
+### Pending Items
+- Complete view migration
+- Integration testing
+- User role management
+- Reservation system core functionality
+- Payment processing integration
+- Report generation
+- Email notification system
+
 See [MIGRATION-STATUS.md](MIGRATION-STATUS.md) for detailed migration progress.
