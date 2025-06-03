@@ -4,58 +4,51 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - Hotel Reservation System</title>
-    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/css/bootstrap-flatty.css" rel="stylesheet" />
-    <link href="~/css/toastr.min.css" rel="stylesheet" />
-    <link href="~/css/Typeahead.css" rel="stylesheet" />
-    <link href="~/css/DataTables/dataTables.bootstrap.min.css" rel="stylesheet" />
-    <link href="~/css/Site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/bootstrap-flatty.css" />
+    <link rel="stylesheet" href="~/css/DataTables/dataTables.bootstrap.css" />
+    <link rel="stylesheet" href="~/css/typeahead.css" />
+    <link rel="stylesheet" href="~/css/toastr.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Hotel Reservation System</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Hotels" asp-action="Index">Hotels</a>
-                    </li>
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Customers" asp-action="Index">Customers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Orders" asp-action="Index">Orders</a>
-                        </li>
-                    }
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand">Book&Go</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Customers" asp-action="Index">Customers</a></li>
+                    <li><a asp-controller="Hotels" asp-action="Index">Hotels</a></li>
+                    <li><a asp-controller="Orders" asp-action="Index">Orders</a></li>
+                    <li><a asp-controller="Home" asp-action="About">About</a></li>
                 </ul>
                 <partial name="_LoginPartial" />
             </div>
         </div>
-    </nav>
-    
+    </div>
     <div class="container body-content">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Hotel Reservation System</p>
+            <p>&copy; @DateTime.Now.Year - Book&Go</p>
         </footer>
     </div>
-    
+
     <script src="~/js/jquery-1.10.2.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
-    <script src="~/js/DataTables/jquery.dataTables.min.js"></script>
-    <script src="~/js/DataTables/dataTables.bootstrap.min.js"></script>
-    <script src="~/js/bootbox.min.js"></script>
+    <script src="~/js/bootbox.js"></script>
+    <script src="~/js/DataTables/jquery.dataTables.js"></script>
+    <script src="~/js/DataTables/dataTables.bootstrap.js"></script>
+    <script src="~/js/typeahead.bundle.js"></script>
     <script src="~/js/toastr.js"></script>
-    <script src="~/js/typeahead.bundle.min.js"></script>
+    
     @await RenderSectionAsync("scripts", required: false)
 </body>
 </html>
