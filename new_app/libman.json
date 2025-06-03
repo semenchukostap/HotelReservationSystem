@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jquery@1.10.2",
+      "destination": "wwwroot/js/",
+      "files": [
+        "jquery.min.js"
+      ]
+    },
+    {
+      "library": "bootstrap@3.4.1",
+      "destination": "wwwroot/",
+      "files": [
+        "css/bootstrap.min.css",
+        "js/bootstrap.min.js",
+        "fonts/glyphicons-halflings-regular.eot",
+        "fonts/glyphicons-halflings-regular.svg",
+        "fonts/glyphicons-halflings-regular.ttf",
+        "fonts/glyphicons-halflings-regular.woff",
+        "fonts/glyphicons-halflings-regular.woff2"
+      ]
+    },
+    {
+      "library": "jquery-validate@1.19.5",
+      "destination": "wwwroot/js/",
+      "files": [
+        "jquery.validate.min.js"
+      ]
+    },
+    {
+      "library": "jquery-validation-unobtrusive@4.0.0",
+      "destination": "wwwroot/js/",
+      "files": [
+        "jquery.validate.unobtrusive.min.js"
+      ]
+    },
+    {
+      "library": "datatables@1.10.21",
+      "destination": "wwwroot/js/DataTables/",
+      "files": [
+        "js/jquery.dataTables.min.js",
+        "js/dataTables.bootstrap.min.js"
+      ]
+    },
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/js/",
+      "files": [
+        "toastr.min.js",
+        "toastr.js"
+      ]
+    },
+    {
+      "library": "bootbox.js@6.0.0",
+      "destination": "wwwroot/js/",
+      "files": [
+        "bootbox.min.js"
+      ]
+    },
+    {
+      "library": "typeahead.js@0.11.1",
+      "destination": "wwwroot/js/",
+      "files": [
+        "typeahead.bundle.min.js"
+      ]
+    }
+  ]
+}
