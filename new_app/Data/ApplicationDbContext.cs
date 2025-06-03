@@ -20,7 +20,7 @@ namespace HotelReservationSystem.Data
         {
             base.OnModelCreating(builder);
             
-            // Configure your entity relationships here if needed
+            // Configure entity relationships here if needed
         }
     }
 }
