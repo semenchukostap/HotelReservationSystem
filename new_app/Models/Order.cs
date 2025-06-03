@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace HotelReservationSystem.Models
@@ -9,8 +10,12 @@ namespace HotelReservationSystem.Models
         [Required]
         public Customer? Customer { get; set; }
         
+        public int CustomerId { get; set; }
+        
         [Required]
         public Hotel? Hotel { get; set; }
+        
+        public int HotelId { get; set; }
 
         [Required]
         public DateTime DateOrdered { get; set; }
