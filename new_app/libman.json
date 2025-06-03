@@ -18,8 +18,7 @@
         "fonts/glyphicons-halflings-regular.eot",
         "fonts/glyphicons-halflings-regular.svg",
         "fonts/glyphicons-halflings-regular.ttf",
-        "fonts/glyphicons-halflings-regular.woff",
-        "fonts/glyphicons-halflings-regular.woff2"
+        "fonts/glyphicons-halflings-regular.woff"
       ]
     },
     {
@@ -53,7 +52,7 @@
       ]
     },
     {
-      "library": "bootbox.js@6.0.0",
+      "library": "bootbox.js@5.5.3",
       "destination": "wwwroot/js/",
       "files": [
         "bootbox.min.js"
