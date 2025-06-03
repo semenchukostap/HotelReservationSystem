@@ -1,0 +1,41 @@
+@model IEnumerable<Hotel>
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<h2>Available Hotels</h2>
+
+<table id="hotels" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Country</th>
+            <th>City</th>
+            <th>Stars</th>
+            <th>Price per night</th>
+            <th>All Inclusive</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hotel in Model)
+        {
+            <tr>
+                <td>@hotel.Name</td>
+                <td>@hotel.Country.Name</td>
+                <td>@hotel.City</td>
+                <td>@hotel.Stars</td>
+                <td>@hotel.PricePerNight.ToString("c")</td>
+                <td>@(hotel.IsAllInclusive ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+            $("#hotels").DataTable();
+        });
+    </script>
+}
