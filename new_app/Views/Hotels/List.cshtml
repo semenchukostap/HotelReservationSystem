@@ -26,7 +26,7 @@
         {
             <tr>
                 <td>@hotel.Name</td>
-                <td>@hotel.Country.Name</td>
+                <td>@hotel.Country?.Name</td>
                 <td>@hotel.City</td>
                 <td>@hotel.Stars</td>
                 <td>@hotel.PricePerNight.ToString("c")</td>
@@ -40,7 +40,7 @@
     </tbody>
 </table>
 
-@section scripts
+@section Scripts
 {
     <script>
         $(document).ready(function() {
@@ -55,6 +55,7 @@
                             method: "DELETE",
                             success: function() {
                                 button.parents("tr").remove();
+                                toastr.success("Hotel deleted successfully");
                             },
                             error: function() {
                                 toastr.error("Failed to delete the hotel.");
