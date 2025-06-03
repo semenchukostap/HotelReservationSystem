@@ -10,7 +10,7 @@ namespace new_app.Models
         public Customer Customer { get; set; }
         
         public int CustomerId { get; set; }
-        
+
         [Required]
         public Hotel Hotel { get; set; }
         
