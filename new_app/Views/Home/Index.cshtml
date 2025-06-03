@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Hotel Reservation System</h1>
+    <p class="lead">Welcome to our modern Hotel Reservation System. Book your stay with us today!</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Hotels</h2>
+        <p>Browse our selection of premium hotels around the world.</p>
+        <p><a asp-controller="Hotels" asp-action="Index" class="btn btn-primary">View Hotels &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Customers</h2>
+        <p>Manage customer information and booking history.</p>
+        <p><a asp-controller="Customers" asp-action="Index" class="btn btn-primary">View Customers &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Orders</h2>
+        <p>Create and manage hotel bookings and reservations.</p>
+        <p><a asp-controller="Orders" asp-action="Index" class="btn btn-primary">View Orders &raquo;</a></p>
+    </div>
+</div>
