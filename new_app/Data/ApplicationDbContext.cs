@@ -20,7 +20,24 @@ namespace new_app.Data
         {
             base.OnModelCreating(builder);
             
-            // Add any additional model configuration here
+            // Configure relationships
+            builder.Entity<Hotel>()
+                .HasOne(h => h.Country)
+                .WithMany()
+                .HasForeignKey(h => h.CountryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Order>()
+                .HasOne(o => o.Customer)
+                .WithMany()
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Order>()
+                .HasOne(o => o.Hotel)
+                .WithMany()
+                .HasForeignKey(o => o.HotelId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
