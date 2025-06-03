@@ -1,4 +1,3 @@
-using new_app.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace new_app.ViewModels
