@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Book&Go</h1>
+    <p class="lead">Simple Hotel Reservation System</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Browse Hotels</h2>
+        <p>
+            View our extensive list of partner hotels across the globe.
+        </p>
+        <p>
+            <a class="btn btn-default" asp-controller="Hotels" asp-action="ReadOnlyList">
+                Browse Hotels &raquo;
+            </a>
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2>Make a Reservation</h2>
+        <p>
+            Book your next stay at one of our premium hotels.
+        </p>
+        <p>
+            <a class="btn btn-default" asp-controller="Orders" asp-action="New">
+                Make Reservation &raquo;
+            </a>
+        </p>
+    </div>
+    <div class="col-md-4">
+        <h2>About Us</h2>
+        <p>
+            Learn more about our hotel reservation service.
+        </p>
+        <p>
+            <a class="btn btn-default" asp-controller="Home" asp-action="About">
+                Learn More &raquo;
+            </a>
+        </p>
+    </div>
+</div>
