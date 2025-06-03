@@ -9,7 +9,7 @@ namespace new_app.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "RequireHotelManagerRole")]
+    [Authorize(Policy = "CanManageHotels")]
     public class NewOrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -33,7 +33,7 @@ namespace new_app.Controllers.Api
             if (hotel == null)
                 return BadRequest("Invalid Hotel ID");
 
-            // Calculate number of days
+            // Calculate number of days and validate dates
             var numberOfDays = (dto.EndDate - dto.StartDate).Days;
             if (numberOfDays <= 0)
                 return BadRequest("End date must be after start date");
