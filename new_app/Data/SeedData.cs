@@ -10,32 +10,10 @@ namespace new_app.Data
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
+            // Ensure database is created
             context.Database.EnsureCreated();
 
-            // Add countries if they don't exist
-            if (!context.Countries.Any())
-            {
-                var countries = new List<Country>
-                {
-                    new Country { Name = "USA" },
-                    new Country { Name = "UK" },
-                    new Country { Name = "Germany" },
-                    new Country { Name = "Spain" },
-                    new Country { Name = "Greece" },
-                    new Country { Name = "France" },
-                    new Country { Name = "Poland" },
-                    new Country { Name = "Turkey" },
-                    new Country { Name = "Malta" },
-                    new Country { Name = "Portugal" },
-                    new Country { Name = "Egypt" },
-                    // Add more countries as needed
-                };
-
-                context.Countries.AddRange(countries);
-                await context.SaveChangesAsync();
-            }
-
-            // Create roles if they don't exist
+            // Seed roles
             string[] roleNames = { "CanManageHotels" };
             foreach (var roleName in roleNames)
             {
@@ -45,8 +23,8 @@ namespace new_app.Data
                 }
             }
 
-            // Create admin user if it doesn't exist
-            var adminEmail = "admin@hotel.com";
+            // Seed admin user
+            string adminEmail = "admin@hotel.com";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
@@ -55,6 +33,7 @@ namespace new_app.Data
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
+                    EmailConfirmed = true,
                     Phone = "123-456-7890"
                 };
 
@@ -63,6 +42,23 @@ namespace new_app.Data
                 {
                     await userManager.AddToRoleAsync(user, "CanManageHotels");
                 }
+            }
+
+            // Seed countries
+            if (!context.Countries.Any())
+            {
+                var countries = new List<Country>
+                {
+                    new Country { Name = "USA" },
+                    new Country { Name = "UK" },
+                    new Country { Name = "France" },
+                    new Country { Name = "Germany" },
+                    new Country { Name = "Italy" },
+                    new Country { Name = "Spain" }
+                };
+
+                context.Countries.AddRange(countries);
+                await context.SaveChangesAsync();
             }
         }
     }
