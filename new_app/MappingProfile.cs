@@ -17,7 +17,6 @@ namespace HotelReservationSystem
             // DTO to Domain
             CreateMap<HotelDto, Hotel>();
             CreateMap<CountryDto, Country>();
-            CreateMap<NewOrderDto, Order>();
         }
     }
 }
