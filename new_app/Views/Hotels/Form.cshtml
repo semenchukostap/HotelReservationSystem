@@ -1,0 +1,64 @@
+@model HotelViewModel
+@{
+    ViewData["Title"] = Model.Id == null ? "New Hotel" : "Edit Hotel";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Save" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+    <input type="hidden" asp-for="Id" />
+    
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="CountryId" class="control-label"></label>
+        <select asp-for="CountryId" class="form-control" asp-items="@(new SelectList(ViewBag.Countries, "Id", "Name"))"></select>
+        <span asp-validation-for="CountryId" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="City" class="control-label"></label>
+        <input asp-for="City" class="form-control" />
+        <span asp-validation-for="City" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="Stars" class="control-label"></label>
+        <input asp-for="Stars" class="form-control" />
+        <span asp-validation-for="Stars" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="PricePerNight" class="control-label"></label>
+        <input asp-for="PricePerNight" class="form-control" />
+        <span asp-validation-for="PricePerNight" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input asp-for="IsAllInclusive" /> All Inclusive
+            </label>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="List">Back to Hotel List</a> | 
+    <a asp-action="NewCountryForm">Add New Country</a>
+</div>
+
+@section Scripts {
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+}
