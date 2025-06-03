@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Hotel Reservation System</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/bootstrap-flatty.css" rel="stylesheet" />
+    <link href="~/css/toastr.min.css" rel="stylesheet" />
+    <link href="~/css/Typeahead.css" rel="stylesheet" />
+    <link href="~/css/DataTables/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/Site.css" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Hotel Reservation System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Hotels" asp-action="Index">Hotels</a>
+                    </li>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Customers" asp-action="Index">Customers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Orders" asp-action="Index">Orders</a>
+                        </li>
+                    }
+                </ul>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Hotel Reservation System</p>
+        </footer>
+    </div>
+    
+    <script src="~/js/jquery-1.10.2.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/DataTables/jquery.dataTables.min.js"></script>
+    <script src="~/js/DataTables/dataTables.bootstrap.min.js"></script>
+    <script src="~/js/bootbox.min.js"></script>
+    <script src="~/js/toastr.js"></script>
+    <script src="~/js/typeahead.bundle.min.js"></script>
+    @await RenderSectionAsync("scripts", required: false)
+</body>
+</html>
