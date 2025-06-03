@@ -1,5 +1,6 @@
 using HotelReservationSystem.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace HotelReservationSystem.Controllers
@@ -21,7 +22,6 @@ namespace HotelReservationSystem.Controllers
         public IActionResult About()
         {
             ViewData["Message"] = "Welcome to Hotel Reservation System.";
-
             return View();
         }
 
