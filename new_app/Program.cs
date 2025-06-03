@@ -43,9 +43,6 @@ builder.Services.AddAuthorization(options =>
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
 
-// Add Application Insights
-builder.Services.AddApplicationInsightsTelemetry();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
