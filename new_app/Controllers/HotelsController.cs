@@ -1,10 +1,10 @@
-using AutoMapper;
 using HotelReservationSystem.Data;
 using HotelReservationSystem.Models;
 using HotelReservationSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace HotelReservationSystem.Controllers
 {
