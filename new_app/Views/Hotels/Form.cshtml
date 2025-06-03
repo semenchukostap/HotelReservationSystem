@@ -18,7 +18,7 @@
     </div>
     <div class="form-group mb-3">
         <label asp-for="Hotel!.CountryId"></label>
-        <select asp-for="Hotel!.CountryId" asp-items="@(new SelectList(Model.Countries, \"Id\", \"Name\"))" class="form-control">
+        <select asp-for="Hotel!.CountryId" asp-items="@(new SelectList(Model.Countries, "Id", "Name"))" class="form-control">
             <option value="">Select a country</option>
         </select>
         <span asp-validation-for="Hotel!.CountryId" class="text-danger"></span>
@@ -34,9 +34,10 @@
         <input asp-for="Hotel!.PricePerNight" class="form-control" />
         <span asp-validation-for="Hotel!.PricePerNight" class="text-danger"></span>
     </div>
-    <div class="form-check mb-3">
-        <input asp-for="Hotel!.IsAllInclusive" class="form-check-input" />
-        <label asp-for="Hotel!.IsAllInclusive" class="form-check-label">All Inclusive?</label>
+    <div class="checkbox mb-3">
+        <label>
+            <input asp-for="Hotel!.IsAllInclusive" /> Allinclusive?
+        </label>
         <span asp-validation-for="Hotel!.IsAllInclusive" class="text-danger"></span>
     </div>
 
