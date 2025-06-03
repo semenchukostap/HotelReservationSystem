@@ -22,23 +22,21 @@ namespace new_app.Controllers.Api
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<HotelDto>>> GetHotels()
         {
             var hotels = await _context.Hotels
-                .Include(c => c.Country)
+                .Include(h => h.Country)
                 .ToListAsync();
 
             return _mapper.Map<List<HotelDto>>(hotels);
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<HotelDto>> GetHotel(int id)
         {
             var hotel = await _context.Hotels
-                .Include(c => c.Country)
-                .SingleOrDefaultAsync(c => c.Id == id);
+                .Include(h => h.Country)
+                .FirstOrDefaultAsync(h => h.Id == id);
 
             if (hotel == null)
                 return NotFound();
@@ -47,7 +45,7 @@ namespace new_app.Controllers.Api
         }
 
         [HttpPost]
-        [Authorize(Policy = "RequireHotelManagerRole")]
+        [Authorize(Policy = "CanManageHotels")]
         public async Task<ActionResult<HotelDto>> CreateHotel(HotelDto hotelDto)
         {
             if (!ModelState.IsValid)
@@ -64,18 +62,20 @@ namespace new_app.Controllers.Api
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "RequireHotelManagerRole")]
+        [Authorize(Policy = "CanManageHotels")]
         public async Task<IActionResult> UpdateHotel(int id, HotelDto hotelDto)
         {
-            if (id != hotelDto.Id || !ModelState.IsValid)
+            if (id != hotelDto.Id)
                 return BadRequest();
 
-            var hotelInDb = await _context.Hotels.FindAsync(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            if (hotelInDb == null)
+            var hotel = await _context.Hotels.FindAsync(id);
+            if (hotel == null)
                 return NotFound();
 
-            _mapper.Map(hotelDto, hotelInDb);
+            _mapper.Map(hotelDto, hotel);
 
             try
             {
@@ -92,7 +92,7 @@ namespace new_app.Controllers.Api
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "RequireHotelManagerRole")]
+        [Authorize(Policy = "CanManageHotels")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
             var hotel = await _context.Hotels.FindAsync(id);
@@ -107,7 +107,7 @@ namespace new_app.Controllers.Api
 
         private async Task<bool> HotelExists(int id)
         {
-            return await _context.Hotels.AnyAsync(e => e.Id == id);
+            return await _context.Hotels.AnyAsync(h => h.Id == id);
         }
     }
 }
