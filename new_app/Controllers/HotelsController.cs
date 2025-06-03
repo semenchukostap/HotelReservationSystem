@@ -28,7 +28,7 @@ namespace new_app.Controllers
             return View(hotels);
         }
 
-        [Authorize(Policy = "RequireHotelManagerRole")]
+        [Authorize(Policy = "CanManageHotels")]
         public async Task<IActionResult> Form(int? id)
         {
             ViewBag.Countries = await _context.Countries.ToListAsync();
@@ -56,7 +56,7 @@ namespace new_app.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "RequireHotelManagerRole")]
+        [Authorize(Policy = "CanManageHotels")]
         public async Task<IActionResult> Save(HotelViewModel viewModel)
         {
             if (!ModelState.IsValid)
@@ -97,7 +97,7 @@ namespace new_app.Controllers
             return RedirectToAction(nameof(List));
         }
 
-        [Authorize(Policy = "RequireHotelManagerRole")]
+        [Authorize(Policy = "CanManageHotels")]
         public IActionResult NewCountryForm()
         {
             return View();
@@ -105,7 +105,7 @@ namespace new_app.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "RequireHotelManagerRole")]
+        [Authorize(Policy = "CanManageHotels")]
         public async Task<IActionResult> SaveCountry(Country country)
         {
             if (!ModelState.IsValid)
