@@ -21,7 +21,7 @@ namespace HotelReservationSystem.Models
         public string City { get; set; } = string.Empty;
 
         [Required]
-        [Range(1,5)]
+        [Range(1, 5)]
         public int Stars { get; set; }
 
         [Required]
