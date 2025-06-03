@@ -1,7 +1,5 @@
-// Write your JavaScript code.
+// Site-wide JavaScript functions
 $(document).ready(function () {
-    // Initialize any plugins or set up event handlers here
-    
     // Configure toastr notifications
     toastr.options = {
         "closeButton": true,
@@ -10,7 +8,6 @@ $(document).ready(function () {
         "progressBar": true,
         "positionClass": "toast-top-right",
         "preventDuplicates": false,
-        "onclick": null,
         "showDuration": "300",
         "hideDuration": "1000",
         "timeOut": "5000",
