@@ -8,14 +8,14 @@
 <form asp-action="SaveCountry" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     
     <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
+        <button type="submit" class="btn btn-primary">Save</button>
     </div>
 </form>
 
@@ -24,6 +24,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/jquery.validate.min.js"></script>
-    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
 }
