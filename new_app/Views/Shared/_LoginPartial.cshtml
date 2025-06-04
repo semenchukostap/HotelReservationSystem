@@ -5,22 +5,33 @@
 <ul class="navbar-nav ms-auto">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" aria-label="Manage your account">Hello @(User.Identity?.Name ?? "User")!</a>
-    </li>
-    <li class="nav-item">
-        <form class="d-inline d-flex align-items-center" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button type="submit" class="nav-link btn btn-link text-dark" aria-label="Logout from your account">Logout</button>
-        </form>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-1"></i>Hello @(User.Identity?.Name ?? "User")!
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="bi bi-gear me-2"></i>Profile</a></li>
+            <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/ChangePassword" title="Change Password"><i class="bi bi-key me-2"></i>Password</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form class="d-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                </form>
+            </li>
+        </ul>
     </li>
 }
 else
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register" aria-label="Register a new account">Register</a>
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register" aria-label="Register a new account">
+            <i class="bi bi-person-plus me-1"></i>Register
+        </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login" aria-label="Log into your account">Login</a>
+        <a class="nav-link text-dark btn btn-outline-primary ms-2" asp-area="Identity" asp-page="/Account/Login" aria-label="Log into your account">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+        </a>
     </li>
 }
 </ul>
