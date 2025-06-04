@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace new_app.Models;
 
 public class Customer
