@@ -1,0 +1,77 @@
+@model IEnumerable<Hotel>
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<h2>Hotels</h2>
+
+@if (User.IsInRole(RoleName.Admin))
+{
+    <p>
+        <a asp-action="Form" class="btn btn-primary">Add New Hotel</a>
+    </p>
+}
+
+<table class="table table-bordered table-hover" id="hotels">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Country</th>
+            <th>City</th>
+            <th>Stars</th>
+            <th>Price Per Night</th>
+            <th>All Inclusive</th>
+            @if (User.IsInRole(RoleName.Admin))
+            {
+                <th>Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hotel in Model)
+        {
+            <tr>
+                <td>@hotel.Name</td>
+                <td>@hotel.Country?.Name</td>
+                <td>@hotel.City</td>
+                <td>@hotel.Stars</td>
+                <td>$@hotel.PricePerNight</td>
+                <td>@(hotel.IsAllInclusive ? "Yes" : "No")</td>
+                @if (User.IsInRole(RoleName.Admin))
+                {
+                    <td>
+                        <a asp-action="Form" asp-route-id="@hotel.Id" class="btn btn-sm btn-info">Edit</a>
+                        <button data-hotel-id="@hotel.Id" class="btn btn-sm btn-danger js-delete">Delete</button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var table = $("#hotels").DataTable();
+            
+            $("#hotels").on("click", ".js-delete", function () {
+                var button = $(this);
+                bootbox.confirm("Are you sure you want to delete this hotel?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/Hotels/Delete/" + button.attr("data-hotel-id"),
+                            method: "GET",
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                                toastr.success("Hotel deleted successfully.");
+                            },
+                            error: function () {
+                                toastr.error("Something went wrong!");
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
