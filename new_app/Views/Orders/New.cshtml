@@ -8,33 +8,37 @@
     <div class="mb-3">
         <label for="customer" class="form-label">Customer</label>
         <div class="ui-widget">
-            <input id="customer" name="customer" data-rule-validCustomer="true" required type="text" class="form-control" />
+            <input id="customer" name="customer" data-rule-validCustomer="true" required type="text" class="form-control" data-bs-toggle="tooltip" title="Search and select a customer" />
         </div>
     </div>
 
     <div class="mb-3">
         <label for="hotel" class="form-label">Hotel</label>
         <div class="ui-widget">
-            <input id="hotel" name="hotel" data-rule-validHotel="true" required type="text" class="form-control" />
+            <input id="hotel" name="hotel" data-rule-validHotel="true" required type="text" class="form-control" data-bs-toggle="tooltip" title="Search and select a hotel" />
         </div>
     </div>
 
     <div class="mb-3">
         <label for="startDate" class="form-label">Start Date</label>
-        <input id="startDate" name="startDate" required type="date" class="form-control" />
+        <input id="startDate" name="startDate" required type="date" class="form-control" data-bs-toggle="tooltip" title="Select the check-in date" />
     </div>
 
     <div class="mb-3">
         <label for="endDate" class="form-label">End Date</label>
-        <input id="endDate" name="endDate" required type="date" class="form-control" />
+        <input id="endDate" name="endDate" required type="date" class="form-control" data-bs-toggle="tooltip" title="Select the check-out date" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <button type="reset" class="btn btn-outline-secondary">Reset</button>
+    <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" title="Submit the reservation order">Submit</button>
+    <button type="reset" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Clear all form fields">Reset</button>
 </form>
 
 @section Scripts {
     <script>
+        // Initialize tooltips
+        $(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
         $(document).ready(function () {
             const vm = {};
 
