@@ -47,32 +47,42 @@ public static class SeedData
         RoleManager<IdentityRole> roleManager)
     {
         // Ensure the database is created
-        await context.Database.EnsureCreatedAsync();
+        await context.Database.EnsureCreatedAsync().ConfigureAwait(false);
         
         // Seed roles
-        await SeedRoles(roleManager);
+        await SeedRoles(roleManager).ConfigureAwait(false);
         
         // Seed admin user
-        await SeedAdminUser(userManager);
+        await SeedAdminUser(userManager).ConfigureAwait(false);
         
         // Seed countries
-        await SeedCountries(context);
+        await SeedCountries(context).ConfigureAwait(false);
     }
     
+    /// <summary>
+    /// Seeds the application roles into the database.
+    /// </summary>
+    /// <param name="roleManager">The ASP.NET Core Identity role manager</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
     private static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
     {
         // Create roles if they don't exist
-        if (!await roleManager.RoleExistsAsync(RoleName.Admin))
+        if (!await roleManager.RoleExistsAsync(RoleName.Admin).ConfigureAwait(false))
         {
-            await roleManager.CreateAsync(new IdentityRole(RoleName.Admin));
+            await roleManager.CreateAsync(new IdentityRole(RoleName.Admin)).ConfigureAwait(false);
         }
         
-        if (!await roleManager.RoleExistsAsync(RoleName.HotelManager))
+        if (!await roleManager.RoleExistsAsync(RoleName.HotelManager).ConfigureAwait(false))
         {
-            await roleManager.CreateAsync(new IdentityRole(RoleName.HotelManager));
+            await roleManager.CreateAsync(new IdentityRole(RoleName.HotelManager)).ConfigureAwait(false);
         }
     }
     
+    /// <summary>
+    /// Seeds administrator users into the database.
+    /// </summary>
+    /// <param name="userManager">The ASP.NET Core Identity user manager</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
     private static async Task SeedAdminUser(UserManager<ApplicationUser> userManager)
     {
         // Create admin users if they don't exist
@@ -81,7 +91,7 @@ public static class SeedData
         
         foreach (var email in adminEmails)
         {
-            var existingUser = await userManager.FindByEmailAsync(email);
+            var existingUser = await userManager.FindByEmailAsync(email).ConfigureAwait(false);
             
             if (existingUser == null)
             {
@@ -93,21 +103,26 @@ public static class SeedData
                     Phone = "123-456-7890"
                 };
                 
-                await userManager.CreateAsync(user, defaultPassword);
+                await userManager.CreateAsync(user, defaultPassword).ConfigureAwait(false);
                 
                 // Only add users with "admin" in their email to the Admin role
                 if (email.Contains("admin"))
                 {
-                    await userManager.AddToRoleAsync(user, RoleName.Admin);
+                    await userManager.AddToRoleAsync(user, RoleName.Admin).ConfigureAwait(false);
                 }
             }
         }
     }
     
+    /// <summary>
+    /// Seeds country data into the database.
+    /// </summary>
+    /// <param name="context">The application database context</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
     private static async Task SeedCountries(ApplicationDbContext context)
     {
         // Seed countries if they don't exist
-        if (!await context.Countries.AnyAsync())
+        if (!await context.Countries.AnyAsync().ConfigureAwait(false))
         {
             var countries = new List<Country>
             {
@@ -134,8 +149,8 @@ public static class SeedData
                 new Country { Name = "India" }
             };
             
-            await context.Countries.AddRangeAsync(countries);
-            await context.SaveChangesAsync();
+            await context.Countries.AddRangeAsync(countries).ConfigureAwait(false);
+            await context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }
