@@ -7,14 +7,14 @@
 <form id="newOrder">
     <div class="mb-3">
         <label for="customer" class="form-label">Customer</label>
-        <div class="tt-container">
+        <div class="ui-widget">
             <input id="customer" name="customer" data-rule-validCustomer="true" required type="text" class="form-control" />
         </div>
     </div>
 
     <div class="mb-3">
         <label for="hotel" class="form-label">Hotel</label>
-        <div class="tt-container">
+        <div class="ui-widget">
             <input id="hotel" name="hotel" data-rule-validHotel="true" required type="text" class="form-control" />
         </div>
     </div>
@@ -30,6 +30,7 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="reset" class="btn btn-outline-secondary">Reset</button>
 </form>
 
 @section Scripts {
@@ -42,6 +43,7 @@
                 source: function(request, response) {
                     $.ajax({
                         url: "/api/customers",
+                        method: "GET",
                         dataType: "json",
                         data: {
                             term: request.term
@@ -67,6 +69,7 @@
                 source: function(request, response) {
                     $.ajax({
                         url: "/api/hotels",
+                        method: "GET",
                         dataType: "json",
                         data: {
                             term: request.term
@@ -144,8 +147,27 @@
                     
                     if (end <= start) {
                         toastr.warning("End date must be after start date.");
+                        $("#endDate").addClass("is-invalid");
+                    } else {
+                        $("#endDate").removeClass("is-invalid");
                     }
                 }
+            });
+
+            // Add form reset handler
+            $("button[type='reset']").on("click", function(e) {
+                e.preventDefault();
+                $("#customer").val("");
+                $("#hotel").val("");
+                $("#startDate").val("");
+                $("#endDate").val("");
+                
+                // Reset viewmodel
+                vm.customerId = undefined;
+                vm.hotelId = undefined;
+                
+                validator.resetForm();
+                $("#endDate").removeClass("is-invalid");
             });
         });
     </script>
