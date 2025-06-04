@@ -5,8 +5,42 @@ using new_app.Models;
 
 namespace new_app;
 
+/// <summary>
+/// Provides methods for seeding initial data in the application.
+/// </summary>
 public static class SeedData
 {
+    /// <summary>
+    /// Initializes the database with seed data.
+    /// 
+    /// This method should be called during application startup in Program.cs as follows:
+    /// 
+    /// Example usage in Program.cs:
+    /// <code>
+    /// // Add this after the app build
+    /// using (var scope = app.Services.CreateScope())
+    /// {
+    ///     var services = scope.ServiceProvider;
+    ///     try
+    ///     {
+    ///         var context = services.GetRequiredService<ApplicationDbContext>();
+    ///         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    ///         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    ///         
+    ///         await SeedData.Initialize(context, userManager, roleManager);
+    ///     }
+    ///     catch (Exception ex)
+    ///     {
+    ///         var logger = services.GetRequiredService<ILogger<Program>>();
+    ///         logger.LogError(ex, "An error occurred while seeding the database.");
+    ///     }
+    /// }
+    /// </code>
+    /// </summary>
+    /// <param name="context">The application database context</param>
+    /// <param name="userManager">The ASP.NET Core Identity user manager</param>
+    /// <param name="roleManager">The ASP.NET Core Identity role manager</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
     public static async Task Initialize(
         ApplicationDbContext context, 
         UserManager<ApplicationUser> userManager,
