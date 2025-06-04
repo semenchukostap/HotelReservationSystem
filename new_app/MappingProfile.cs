@@ -10,7 +10,8 @@ public class MappingProfile : Profile
     {
         // Maps for Hotel
         CreateMap<Hotel, HotelDto>()
-            .ForMember(dto => dto.CountryName, opt => opt.MapFrom(h => h.Country.Name));
+            .ForMember(dto => dto.CountryName, opt => opt.MapFrom(h => h.Country != null ? h.Country.Name : string.Empty));
+        CreateMap<HotelDto, Hotel>();
             
         // Maps for Country
         CreateMap<Country, CountryDto>();
