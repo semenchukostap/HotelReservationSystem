@@ -8,7 +8,7 @@
 @if (User.IsInRole(RoleName.Admin))
 {
     <p>
-        <a asp-action="Form" class="btn btn-primary">Add New Hotel</a>
+        <a asp-controller="Hotels" asp-action="Form" class="btn btn-primary">Add New Hotel</a>
     </p>
 }
 
