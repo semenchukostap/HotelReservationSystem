@@ -1,0 +1,146 @@
+@{
+    ViewData["Title"] = "New Order";
+}
+
+<h2>New Order</h2>
+
+<form id="newOrder">
+    <div class="mb-3">
+        <label for="customer" class="form-label">Customer</label>
+        <div class="tt-container">
+            <input id="customer" name="customer" data-rule-validCustomer="true" required type="text" class="form-control" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="hotel" class="form-label">Hotel</label>
+        <div class="tt-container">
+            <input id="hotel" name="hotel" data-rule-validHotel="true" required type="text" class="form-control" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input id="startDate" name="startDate" required type="date" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="endDate" class="form-label">End Date</label>
+        <input id="endDate" name="endDate" required type="date" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const vm = {};
+
+            // Setup autocomplete for customers
+            $("#customer").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/api/customers",
+                        dataType: "json",
+                        success: function(data) {
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.name,
+                                    value: item.name,
+                                    id: item.id
+                                };
+                            }));
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    vm.customerId = ui.item.id;
+                }
+            });
+
+            // Setup autocomplete for hotels
+            $("#hotel").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/api/hotels",
+                        dataType: "json",
+                        success: function(data) {
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.name,
+                                    value: item.name,
+                                    id: item.id
+                                };
+                            }));
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    vm.hotelId = ui.item.id;
+                }
+            });
+
+            // Add custom validation methods
+            $.validator.addMethod("validCustomer", function () {
+                return vm.customerId && vm.customerId !== 0;
+            }, "Please select a valid customer.");
+
+            $.validator.addMethod("validHotel", function () {
+                return vm.hotelId && vm.hotelId !== 0;
+            }, "Please select a valid hotel.");
+
+            // Handle form submission
+            const validator = $("#newOrder").validate({
+                submitHandler: function () {
+                    bootbox.confirm("Are you sure you want to place this order?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/orders",
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify({
+                                    customerId: vm.customerId,
+                                    hotelId: vm.hotelId,
+                                    startDate: $("#startDate").val(),
+                                    endDate: $("#endDate").val()
+                                }),
+                                success: function () {
+                                    toastr.success("Order successfully recorded.");
+                                    
+                                    // Clear form
+                                    $("#customer").val("");
+                                    $("#hotel").val("");
+                                    $("#startDate").val("");
+                                    $("#endDate").val("");
+                                    
+                                    // Reset viewmodel
+                                    vm.customerId = undefined;
+                                    vm.hotelId = undefined;
+                                    
+                                    validator.resetForm();
+                                },
+                                error: function () {
+                                    toastr.error("Something went wrong.");
+                                }
+                            });
+                        }
+                    });
+                    return false;
+                }
+            });
+
+            // Update viewmodel when dates change
+            $("#startDate, #endDate").on("change", function() {
+                if ($("#startDate").val() && $("#endDate").val()) {
+                    const start = new Date($("#startDate").val());
+                    const end = new Date($("#endDate").val());
+                    
+                    if (end <= start) {
+                        toastr.warning("End date must be after start date.");
+                    }
+                }
+            });
+        });
+    </script>
+}
