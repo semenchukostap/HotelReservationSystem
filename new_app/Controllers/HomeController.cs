@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using new_app.Models;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace new_app.Controllers;
 
@@ -15,19 +16,27 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        _logger.LogInformation("Index page accessed");
         return View();
     }
 
-    public IActionResult About()
+    public async Task<IActionResult> About()
     {
+        _logger.LogInformation("About page accessed");
         return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        var errorModel = new ErrorViewModel 
+        { 
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier 
+        };
+        
+        _logger.LogError("Error page accessed with RequestId: {RequestId}", errorModel.RequestId);
+        return View(errorModel);
     }
 }
