@@ -41,22 +41,32 @@ public static class SeedData
     
     private static async Task SeedAdminUser(UserManager<ApplicationUser> userManager)
     {
-        // Create admin user if it doesn't exist
-        var adminEmail = "admin@example.com";
-        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        // Create admin users if they don't exist
+        var adminEmails = new[] { "admin@admin.com", "admin@book.go", "guest@book.go" };
+        var defaultPassword = "Admin123!";
         
-        if (adminUser == null)
+        foreach (var email in adminEmails)
         {
-            adminUser = new ApplicationUser
-            {
-                UserName = adminEmail,
-                Email = adminEmail,
-                EmailConfirmed = true,
-                Phone = "123-456-7890"
-            };
+            var existingUser = await userManager.FindByEmailAsync(email);
             
-            await userManager.CreateAsync(adminUser, "Admin123!");
-            await userManager.AddToRoleAsync(adminUser, RoleName.Admin);
+            if (existingUser == null)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    Phone = "123-456-7890"
+                };
+                
+                await userManager.CreateAsync(user, defaultPassword);
+                
+                // Only add users with "admin" in their email to the Admin role
+                if (email.Contains("admin"))
+                {
+                    await userManager.AddToRoleAsync(user, RoleName.Admin);
+                }
+            }
         }
     }
     
@@ -76,7 +86,12 @@ public static class SeedData
                 new Country { Name = "Japan" },
                 new Country { Name = "Australia" },
                 new Country { Name = "Canada" },
-                new Country { Name = "Mexico" }
+                new Country { Name = "Mexico" },
+                new Country { Name = "Portugal" }, // Fixed the typo from "Portual"
+                new Country { Name = "Brazil" },
+                new Country { Name = "Argentina" },
+                new Country { Name = "China" },
+                new Country { Name = "India" }
             };
             
             await context.Countries.AddRangeAsync(countries);
