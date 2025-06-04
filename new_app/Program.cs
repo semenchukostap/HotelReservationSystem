@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using new_app.Data;
 using new_app.Models;
 
@@ -10,24 +13,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Add Identity services
+// Add Identity services with modern configuration
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-
-// Add AutoMapper
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
-// Add Application Insights
-builder.Services.AddApplicationInsightsTelemetry();
-
-// Add controllers and views
-builder.Services.AddControllersWithViews();
-
-// Configure Identity options (similar to the original Identity configuration)
-builder.Services.Configure<IdentityOptions>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
 {
+    options.SignIn.RequireConfirmedAccount = true;
+    
     // Password settings
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
@@ -42,7 +33,10 @@ builder.Services.Configure<IdentityOptions>(options =>
 
     // User settings
     options.User.RequireUniqueEmail = true;
-});
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders()
+.AddDefaultUI();
 
 // Configure cookie policy
 builder.Services.ConfigureApplicationCookie(options =>
@@ -55,11 +49,49 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// Add AutoMapper with assembly scanning
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+// Add Application Insights
+builder.Services.AddApplicationInsightsTelemetry();
+
+// Add controllers and views with modern options
+builder.Services.AddControllersWithViews(options => 
+{
+    options.EnableEndpointRouting = true;
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+});
+
+// Add Razor Pages support
+builder.Services.AddRazorPages();
+
+// HTTP client factory for modern API consumption
+builder.Services.AddHttpClient();
+
+// Memory cache
+builder.Services.AddMemoryCache();
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7000")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Configure the HTTP request pipeline with modern middleware
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseMigrationsEndPoint();
 }
 else
@@ -70,26 +102,28 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseCookiePolicy();
 app.UseRouting();
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configure routes (similar to RouteConfig in the old application)
+// Configure endpoints using modern endpoint routing
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Configure API routes (similar to WebApiConfig in the old application)
-app.MapControllerRoute(
-    name: "api",
-    pattern: "api/{controller}/{id?}");
+// API endpoints with attribute routing
+app.MapControllers();
 
 app.MapRazorPages();
 
+// Health checks endpoint
+app.MapGet("/health", () => "Healthy");
+
 // Seed data and run the application
-using (var scope = app.Services.CreateScope())
+await using (var scope = app.Services.CreateAsyncScope())
 {
     var services = scope.ServiceProvider;
     try
@@ -98,7 +132,10 @@ using (var scope = app.Services.CreateScope())
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         
-        // You'll need to implement this
+        // Apply pending migrations at startup
+        await context.Database.MigrateAsync();
+        
+        // Seed initial data
         await SeedData.Initialize(context, userManager, roleManager);
     }
     catch (Exception ex)
@@ -108,4 +145,4 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.Run();
+await app.RunAsync();
